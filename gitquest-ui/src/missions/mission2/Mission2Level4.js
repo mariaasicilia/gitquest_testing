@@ -38,6 +38,7 @@ export const mission2level4 = {
   battle: {
     scenario: `You've already created the decoy-operation branch. What command switches your working environment to it?`,
     expected: 'git checkout decoy-operation',
+    accept: ['git switch decoy-operation'],
     hint: 'git checkout followed by the branch name.',
   },
 }

@@ -5,7 +5,7 @@ import { mission1level4 } from "./Mission1Level4";
 import { mission1level5 } from "./Mission1Level5";
 
 export const mission1 = {
-  id: 'M1', x: 60, y: 138, done: true,
+  id: 'M1', x: 60, y: 140,
   title: 'Mission 1 — First Contact',
   levels: {
     M1L1: mission1level1,
