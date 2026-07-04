@@ -36,6 +36,9 @@ export const mission1level5 = {
   battle: {
     scenario: `A forensic log containing proof of the hackers' activities was accidentally left out of your most recent report. You've staged the missing file and want to add it to your last commit while keeping the existing commit message.`,
     expected: 'git commit --amend --no-edit',
+    reject: [
+      { cmd: 'git commit --amend', message: 'Close \u2014 but plain --amend opens the editor to change the message. The scenario says the message must stay untouched; there\u2019s a flag for that.' },
+    ],
     hint: 'Amend the last commit, but skip the message editor.',
   },
 }

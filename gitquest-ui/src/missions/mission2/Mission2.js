@@ -5,7 +5,7 @@ import { mission2level4 } from "./Mission2Level4";
 import { mission2level5 } from "./Mission2Level5";
 
 export const mission2 = {
-  id: 'M2', x: 250, y: 138, done: true,
+  id: 'M2', x: 150, y: 90,
   title: 'Mission 2 — Covert Operations',
   levels: {
     M2L1: mission2level1,
