@@ -1,8 +1,7 @@
-export const mission2level5 = {
-  id: 'M2L5',
+export const level1m8 = {
+  id: 'L1M8',
   cmd: 'git restore',
   diff: 'medium',
-  done: true,
   title: 'git restore',
   subtitle: 'Discard uncommitted changes to a file',
   briefing: `An analyst on your team accidentally overwrote suspect-file.txt with incorrect data. The file hasn't been committed yet — restore it to its last known good state before the error becomes permanent.`,
