@@ -1,6 +1,9 @@
 import { useState } from 'react'
 import { MISSIONS } from '../missions/Missions'
-import { useProgress } from '../context/ProgressContext'
+import { useProgress } from '../context/useProgress'
+import { validateCommand } from '../game/validateCommand'
+import { battleScore } from '../game/stats'
+import { nextLevelAfter, isLevelUnlocked } from '../game/unlocks'
 
 function TerminalBlock({ lines }) {
   return (
@@ -23,21 +26,40 @@ function TerminalBlock({ lines }) {
   )
 }
 
-function BattleSection({ battle, onComplete }) {
+// Shared command input + feedback for one battle objective (a whole lesson
+// battle, or a single capstone step). Hint policy:
+//   * after 1 wrong attempt: a "reveal hint" button appears
+//     (owning the Auto-hint Module reveals it automatically instead)
+//   * after 2 wrong attempts: the hint reveals automatically
+//   * owning Ghost Command shows a faded copy of the expected command
+//     after the first wrong attempt.
+function CommandChallenge({ battle, onSolved }) {
+  const { recordHintUsed, ownsItem } = useProgress()
   const [input, setInput] = useState('')
-  const [submitted, setSubmitted] = useState(false)
-  const [correct, setCorrect] = useState(false)
-  const [attempts, setAttempts] = useState(0)
-  const [showHint, setShowHint] = useState(false)
+  const [feedback, setFeedback] = useState(null) // { correct, message }
+  const [wrongAttempts, setWrongAttempts] = useState(0)
+  const [hintShown, setHintShown] = useState(false)
+
+  const autoHint = ownsItem(1)   // Auto-hint Module
+  const ghostCmd = ownsItem(3)   // Ghost Command
+
+  const revealHint = () => {
+    if (!hintShown) {
+      setHintShown(true)
+      recordHintUsed()
+    }
+  }
 
   const handleSubmit = () => {
-    const trimmed = input.trim()
-    const isCorrect = trimmed === battle.expected
-    setCorrect(isCorrect)
-    setSubmitted(true)
-    setAttempts(a => a + 1)
-    if (isCorrect) {
-      setTimeout(() => onComplete(), 1200)
+    if (feedback?.correct) return
+    const result = validateCommand(input, battle)
+    setFeedback(result)
+    if (result.correct) {
+      onSolved(battleScore(wrongAttempts, hintShown))
+    } else {
+      const nextWrong = wrongAttempts + 1
+      setWrongAttempts(nextWrong)
+      if (nextWrong >= 2 || (autoHint && nextWrong >= 1)) revealHint()
     }
   }
 
@@ -45,12 +67,71 @@ function BattleSection({ battle, onComplete }) {
     if (e.key === 'Enter') handleSubmit()
   }
 
-  const handleRetry = () => {
-    setInput('')
-    setSubmitted(false)
-    if (attempts >= 1) setShowHint(true)
-  }
+  return (
+    <div>
+      {hintShown && (
+        <div style={{ background: '#0d1f15', border: '1px solid #00ff8833', borderRadius: 8, padding: '10px 14px', marginBottom: '1rem', fontSize: 12, color: '#00cc66', fontFamily: 'monospace' }}>
+          HINT: {battle.hint}
+        </div>
+      )}
 
+      {ghostCmd && wrongAttempts >= 1 && !feedback?.correct && (
+        <div style={{ marginBottom: '0.75rem', fontSize: 12, color: '#2a3a55', fontFamily: 'monospace' }}>
+          👻 ghost command: <span style={{ opacity: 0.45 }}>{battle.expected}</span>
+        </div>
+      )}
+
+      <div style={{ display: 'flex', gap: 8, alignItems: 'center' }}>
+        <span style={{ color: '#00ff8877', fontFamily: 'monospace', fontSize: 14 }}>$</span>
+        <input
+          value={input}
+          onChange={e => setInput(e.target.value)}
+          onKeyDown={handleKeyDown}
+          disabled={feedback?.correct}
+          placeholder="enter command..."
+          aria-label="command input"
+          style={{
+            flex: 1, background: '#040810',
+            border: `1px solid ${feedback ? (feedback.correct ? '#00ff88' : '#e24b4a') : '#1a2a45'}`,
+            borderRadius: 8, padding: '10px 14px',
+            color: '#c8daf0', fontFamily: 'monospace', fontSize: 13,
+            outline: 'none',
+          }}
+        />
+        <button
+          onClick={handleSubmit}
+          disabled={feedback?.correct}
+          style={{
+            background: '#003322', border: '1px solid #00ff88',
+            color: '#00ff88', borderRadius: 8, padding: '10px 20px',
+            cursor: feedback?.correct ? 'default' : 'pointer',
+            fontFamily: 'monospace', fontSize: 13,
+          }}
+        >
+          Execute
+        </button>
+      </div>
+
+      {feedback && (
+        <div style={{ marginTop: 10, fontSize: 12, fontFamily: 'monospace', lineHeight: 1.7, color: feedback.correct ? '#00ff88' : '#e24b4a' }}>
+          {feedback.correct ? '✓ COMMAND ACCEPTED — objective secured' : `✗ ${feedback.message}`}
+        </div>
+      )}
+
+      {!feedback?.correct && wrongAttempts >= 1 && !hintShown && (
+        <button
+          onClick={revealHint}
+          style={{ marginTop: 10, fontSize: 11, color: '#4a6fa5', background: 'none', border: '1px solid #1a2a45', borderRadius: 6, padding: '5px 12px', cursor: 'pointer', fontFamily: 'monospace' }}
+        >
+          reveal hint (−10 score)
+        </button>
+      )}
+    </div>
+  )
+}
+
+// Classic single-command battle.
+function BattleSection({ battle, onComplete }) {
   return (
     <div style={{ marginTop: '2rem', borderTop: '1px solid #1a2a45', paddingTop: '2rem' }}>
       <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: '1rem' }}>
@@ -62,59 +143,72 @@ function BattleSection({ battle, onComplete }) {
         <span style={{ color: '#e24b4a' }}>ALERT: </span>{battle.scenario.replace('ALERT: ', '')}
       </div>
 
-      {showHint && (
-        <div style={{ background: '#0d1f15', border: '1px solid #00ff8833', borderRadius: 8, padding: '10px 14px', marginBottom: '1rem', fontSize: 12, color: '#00cc66', fontFamily: 'monospace' }}>
-          HINT: {battle.hint}
-        </div>
-      )}
-
-      <div style={{ display: 'flex', gap: 8, alignItems: 'center' }}>
-        <span style={{ color: '#00ff8877', fontFamily: 'monospace', fontSize: 14 }}>$</span>
-        <input
-          value={input}
-          onChange={e => setInput(e.target.value)}
-          onKeyDown={handleKeyDown}
-          disabled={submitted && correct}
-          placeholder="enter command..."
-          style={{
-            flex: 1, background: '#040810',
-            border: `1px solid ${submitted ? (correct ? '#00ff88' : '#e24b4a') : '#1a2a45'}`,
-            borderRadius: 8, padding: '10px 14px',
-            color: '#c8daf0', fontFamily: 'monospace', fontSize: 13,
-            outline: 'none',
-          }}
-        />
-        <button
-          onClick={submitted && !correct ? handleRetry : handleSubmit}
-          disabled={!input.trim()}
-          style={{
-            background: '#003322', border: '1px solid #00ff88',
-            color: '#00ff88', borderRadius: 8, padding: '10px 20px',
-            cursor: input.trim() ? 'pointer' : 'not-allowed',
-            fontFamily: 'monospace', fontSize: 13,
-            opacity: input.trim() ? 1 : 0.4,
-          }}
-        >
-          {submitted && !correct ? 'Retry' : 'Execute'}
-        </button>
-      </div>
-
-      {submitted && (
-        <div style={{ marginTop: 10, fontSize: 12, fontFamily: 'monospace', color: correct ? '#00ff88' : '#e24b4a' }}>
-          {correct
-            ? '✓ COMMAND ACCEPTED — mission objective secured'
-            : `✗ REJECTED — ${attempts > 1 ? 'check your syntax carefully' : 'try again'}`}
-        </div>
-      )}
+      <CommandChallenge battle={battle} onSolved={score => setTimeout(() => onComplete(score), 900)} />
     </div>
   )
 }
 
-export default function TrainingPage({ levelId, questId, onBack, onComplete }) {
-  const { completeLevel } = useProgress();
-  const data = MISSIONS[questId].levels[levelId];
-  const [battleDone, setBattleDone] = useState(false)
-  const [skippedToBottom, setSkippedToBottom] = useState(false)
+// Multi-step capstone battle: one CommandChallenge per step, advanced in
+// sequence. A wrong command fails only the current step, and the feedback
+// names that step. The final score is the average of the per-step scores.
+function SequenceBattle({ battle, onComplete }) {
+  const [stepIndex, setStepIndex] = useState(0)
+  const [stepScores, setStepScores] = useState([])
+  const [lastSuccess, setLastSuccess] = useState(null)
+
+  const steps = battle.steps
+  const step = steps[stepIndex]
+  const totalSteps = steps.length
+
+  const handleSolved = (score) => {
+    const scores = [...stepScores, score]
+    setStepScores(scores)
+    setLastSuccess(step.success)
+    if (stepIndex === totalSteps - 1) {
+      const avg = Math.round(scores.reduce((a, b) => a + b, 0) / scores.length)
+      setTimeout(() => onComplete(avg), 1600)
+    } else {
+      setTimeout(() => {
+        setLastSuccess(null)
+        setStepIndex(i => i + 1)
+      }, 1600)
+    }
+  }
+
+  return (
+    <div style={{ marginTop: '2rem', borderTop: '1px solid #1a2a45', paddingTop: '2rem' }}>
+      <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: '1rem' }}>
+        <span style={{ fontSize: 10, color: '#e24b4a', letterSpacing: '0.15em', fontFamily: 'monospace', border: '1px solid #e24b4a44', borderRadius: 4, padding: '3px 8px' }}>BOSS BATTLE</span>
+        <span style={{ fontSize: 11, color: '#4a6fa5', fontFamily: 'monospace' }}>STEP {stepIndex + 1} / {totalSteps}</span>
+      </div>
+
+      {/* step progress pips */}
+      <div style={{ display: 'flex', gap: 4, marginBottom: '1.25rem' }}>
+        {steps.map((s, i) => (
+          <div key={i} style={{ flex: 1, height: 4, borderRadius: 99, background: i < stepIndex ? '#00ff88' : i === stepIndex ? '#00ff8855' : '#1a2a45' }} />
+        ))}
+      </div>
+
+      <div style={{ background: '#080c17', border: '1px solid #e24b4a33', borderRadius: 8, padding: '1rem 1.25rem', marginBottom: '1.25rem', fontSize: 13, color: '#c8daf0', lineHeight: 1.7, fontFamily: 'monospace' }}>
+        <span style={{ color: '#e24b4a' }}>STEP {stepIndex + 1}: </span>{step.objective}
+      </div>
+
+      {lastSuccess && (
+        <div style={{ background: '#0d1f15', border: '1px solid #00ff8833', borderRadius: 8, padding: '10px 14px', marginBottom: '1rem', fontSize: 12, color: '#00cc66', fontFamily: 'monospace', lineHeight: 1.7 }}>
+          {lastSuccess}
+        </div>
+      )}
+
+      {/* key remounts the challenge per step so input/attempt state resets */}
+      <CommandChallenge key={stepIndex} battle={step} onSolved={handleSolved} />
+    </div>
+  )
+}
+
+export default function TrainingPage({ levelId, questId, onBack, onComplete, onNextLevel }) {
+  const { completeLevel, progress } = useProgress()
+  const data = MISSIONS[questId]?.levels?.[levelId]
+  const [result, setResult] = useState(null) // { score }
 
   if (!data) {
     return (
@@ -123,6 +217,14 @@ export default function TrainingPage({ levelId, questId, onBack, onComplete }) {
         <button onClick={onBack} style={{ marginTop: 16, color: '#00ff88', background: 'none', border: '1px solid #00ff8844', borderRadius: 8, padding: '8px 16px', cursor: 'pointer', fontFamily: 'monospace' }}>← back</button>
       </div>
     )
+  }
+
+  const next = nextLevelAfter(levelId)
+  const nextUnlocked = next && isLevelUnlocked(next.levelId, progress)
+
+  const handleBattleComplete = (score) => {
+    completeLevel(levelId, score)
+    setResult({ score })
   }
 
   return (
@@ -138,10 +240,7 @@ export default function TrainingPage({ levelId, questId, onBack, onComplete }) {
         <span style={{ fontSize: 11, color: '#00ff88', fontFamily: 'monospace' }}>{data.title}</span>
         <div style={{ flex: 1 }} />
         <button
-          onClick={() => {
-            setSkippedToBottom(true)
-            setTimeout(() => document.getElementById('battle-section')?.scrollIntoView({ behavior: 'smooth' }), 50)
-          }}
+          onClick={() => document.getElementById('battle-section')?.scrollIntoView({ behavior: 'smooth' })}
           style={{ fontSize: 11, color: '#4a6fa5', background: 'none', border: '1px solid #1a2a45', borderRadius: 6, padding: '5px 12px', cursor: 'pointer', fontFamily: 'monospace' }}
         >
           skip to battle ↓
@@ -218,21 +317,29 @@ export default function TrainingPage({ levelId, questId, onBack, onComplete }) {
         </div>
 
         {/* Battle */}
-        {battleDone ? (
+        {result ? (
           <div style={{ textAlign: 'center', padding: '2rem', border: '1px solid #00ff8844', borderRadius: 12, background: '#0d1f15' }}>
             <div style={{ fontSize: 28, marginBottom: 8 }}>✓</div>
             <div style={{ fontFamily: 'monospace', fontSize: 14, color: '#00ff88', marginBottom: 4 }}>OBJECTIVE SECURED</div>
-            <div style={{ fontFamily: 'monospace', fontSize: 12, color: '#4a6fa5', marginBottom: '1.5rem' }}>Training module complete. Returning to mission...</div>
-            <button onClick={onComplete} style={{ background: '#003322', border: '1px solid #00ff88', color: '#00ff88', borderRadius: 8, padding: '10px 24px', cursor: 'pointer', fontFamily: 'monospace', fontSize: 13 }}>
-              Continue ▶
-            </button>
+            <div style={{ fontFamily: 'monospace', fontSize: 12, color: '#c8daf0', marginBottom: 4 }}>
+              ASSESSMENT SCORE: {result.score} / 100
+            </div>
+            <div style={{ fontFamily: 'monospace', fontSize: 12, color: '#4a6fa5', marginBottom: '1.5rem' }}>Training module complete.</div>
+            <div style={{ display: 'flex', gap: 10, justifyContent: 'center' }}>
+              <button onClick={onComplete} style={{ background: 'none', border: '1px solid #1a2a45', color: '#4a6fa5', borderRadius: 8, padding: '10px 20px', cursor: 'pointer', fontFamily: 'monospace', fontSize: 13 }}>
+                Mission map
+              </button>
+              {nextUnlocked && (
+                <button onClick={() => onNextLevel(next.levelId, next.missionId)} style={{ background: '#003322', border: '1px solid #00ff88', color: '#00ff88', borderRadius: 8, padding: '10px 24px', cursor: 'pointer', fontFamily: 'monospace', fontSize: 13 }}>
+                  Next lesson ▶
+                </button>
+              )}
+            </div>
           </div>
+        ) : data.battle.type === 'sequence' ? (
+          <SequenceBattle battle={data.battle} onComplete={handleBattleComplete} />
         ) : (
-          <BattleSection levelId={levelId} battle={data.battle} onComplete={() => {
-            completeLevel(levelId);
-            setBattleDone(true)
-          }}
-          />
+          <BattleSection battle={data.battle} onComplete={handleBattleComplete} />
         )}
 
         <div style={{ height: '3rem' }} />
