@@ -17,7 +17,7 @@ All commands run from a clean checkout, Node 22, `npm ci`.
 |---|---|---|
 | Build | `gitquest-ui: npm run build` | ✅ built, no warnings |
 | Lint | `gitquest-ui: npm run lint` | ✅ 0 errors, 0 warnings |
-| Unit + integration tests | `gitquest-ui: npm run test` | ✅ 8 suites, 83/83 passed |
+| Unit + integration tests | `gitquest-ui: npm run test` | ✅ 8 suites, 85/85 passed |
 | Root parser spike | `tests: npm run test` | ✅ 3/3 passed |
 | Production serve | `npm run preview` + fetch of `/gitquest/` and hashed assets | ✅ 200s, correct base path |
 
@@ -25,7 +25,7 @@ All commands run from a clean checkout, Node 22, `npm ci`.
 
 - `validateCommand.test.js` (22) — normalization (whitespace/smart quotes), accept variants, `<message>` placeholder, reject rules, and every diagnostic class: empty, non-git, case, wrong command, missing/extra argument, wrong flag near-miss, wrong target.
 - `unlocks.test.js` (13) — recruit sequential gating incl. cross-mission boundaries, replayability, safe default when mode is missing, field-agent free roam, next-playable and next-after traversal.
-- `statsAndAchievements.test.js` (13) — totals (17-lesson registry), overall/mission %, stale-completion filtering, coin earn/spend/floor, battle scoring floor, perfect/average scores; achievement earn rules incl. the 10-lesson Level 1 badge boundary (9 ≠ badge, 10 = badge) and monotonicity.
+- `statsAndAchievements.test.js` (13) — totals (30-mission registry), overall/mission %, stale-completion filtering, coin earn/spend/floor, battle scoring floor, perfect/average scores; achievement earn rules incl. the 10-lesson Level 1 badge boundary (9 ≠ badge, 10 = badge) and monotonicity.
 - `ProgressContext.test.jsx` (7) — completion + score + First Blood, idempotent replay keeping best score, localStorage persistence and rehydration, corrupt-storage fallback, guarded purchases (insufficient/double), placement storage, full reset.
 - `TrainingPage.test.jsx` (11) — tutorial + battle render, first-try 100 persisted, empty-input message, wrong-command diagnostic + retry, hint reveal timing and −10/−25 scoring with `hintsUsed` persisted, `git add .` teaching rejection, `git switch` accept variant, Next-lesson gating (offered when unlocked, hidden when locked), unknown-lesson guard, capstone: 7-step advance, step-local failure (`git pull` at the fetch step), averaged score, completion persisted.
 - `PlacementQuiz.test.jsx` (9) — threshold math at exactly 75% and below, unanswered-safe scoring, submit gating, pass result + persisted recommendation, wrong-answer explanations, skip path.

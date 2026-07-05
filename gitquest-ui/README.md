@@ -27,13 +27,13 @@ The Welcome screen choice is persisted into progress state (`progress.mode`) and
 
 ## Curriculum
 
-| Mission | Level | Lessons |
+| Level | Focus | Missions |
 |---|---|---|
-| M1 — First Contact | 1 | `git clone`, `git pull`, `git add <file>`, `git commit -m`, `git commit --amend --no-edit` |
-| M2 — Covert Operations | 1 | `git status`, `git log`, `git branch <name>`, `git checkout <branch>`, `git restore <file>` |
-| M3 — Remote Uplink | 2 | `git push`, `git fetch` (vs. pull), `git push --force-with-lease` (unsafe `--force`/`-f` rejected with an explanation) |
-| M4 — History Surgery | 3 | `git branch -d` (safe local deletion; `-D` and remote deletion rejected with explanations), `git rebase`, rebase-conflict recovery (`git rebase --continue`) |
-| M5 — Final Breach | 4 | Capstone boss battle: a 7-step sequence (inspect → fetch → branch → stage → commit → publish → recover from a rejected push). Each step validates independently and failure feedback names the failed step. |
+| L1 — Recruit Training (Easy) | Repository basics | `clone`, `pull`, `status`, `add <file>`, `commit -m`, `log`, `diff`, `restore <file>`, `branch <name>`, `checkout <branch>` |
+| L2 — Field Operations (Intermediate) | Team coordination & recovery | `stash`, `stash pop`, `commit --amend --no-edit`, `push`, `merge`, `tag`, `branch -a`, `revert HEAD`, `reset --hard HEAD~1`, `branch -d` |
+| L3 — Ghost Protocol (Hard) | History surgery | `cherry-pick`, `rebase main`, `stash branch`, `merge --squash`, `bisect start`, `bisect good`, `reflog`, `rebase -i HEAD~3`, `commit -S`, `archive` |
+
+Each level ends with a storyline completion celebration, and finishing Level 3 shows the full operation-complete message from the Director. Terminology note: the codebase registry calls each storyline *Level* a "mission" containing "levels" — the data shape predates the storyline naming.
 
 ## Command validation (`src/game/validateCommand.js`)
 

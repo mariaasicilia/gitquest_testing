@@ -37,7 +37,7 @@ Status of the implementation against `HANDOFF.md`. Supersedes the "What is done 
 | Consolidate/fix the root tests project | ✅ Fixed (renamed to `.ts`, corrected import) and kept as a passing historical spike; `gitquest-ui/tests` documented as authoritative. |
 | Rewrite READMEs | ✅ Root `README.md` added; `gitquest-ui/README.md` rewritten (was the Vite template). |
 | Lint clean | ✅ 0 errors (was 23 at baseline). |
-| Automated tests | ✅ 83 passing in `gitquest-ui` (8 suites) + 3 in the root spike. |
+| Automated tests | ✅ 85 passing in `gitquest-ui` (8 suites) + 3 in the root spike. |
 | Cross-browser manual pass | ⬜ Remaining — see TEST-LOG. |
 
 ## Decisions of record
