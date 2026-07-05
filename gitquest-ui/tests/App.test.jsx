@@ -12,7 +12,7 @@ describe('App shell routing', () => {
     fireEvent.click(screen.getByText('New recruit'))
     expect(screen.getByText(/OVERALL PROGRESS — 0%/)).toBeInTheDocument()
     expect(screen.getByText('NEW RECRUIT')).toBeInTheDocument()
-    expect(screen.getByText(/🎖 0\/5/)).toBeInTheDocument()
+    expect(screen.getByText(/🎖 0\/3/)).toBeInTheDocument()
     expect(screen.getByText(/💰 0/)).toBeInTheDocument()
   })
 
@@ -28,23 +28,23 @@ describe('App shell routing', () => {
   test('a returning field agent with a stored placement result goes straight to the map with the recommendation banner', () => {
     localStorage.setItem('gitquest-progress', JSON.stringify({
       mode: 'vet',
-      placement: { correct: 7, total: 8, pct: 88, passed: true, recommendedMission: 'M3' },
+      placement: { correct: 7, total: 8, pct: 88, passed: true, recommendedMission: 'L2' },
     }))
     render(<App />)
     fireEvent.click(screen.getByText('Field agent'))
     expect(screen.queryByText('Placement assessment')).not.toBeInTheDocument()
-    expect(screen.getByText(/recommended start: M3 — Remote Uplink/)).toBeInTheDocument()
+    expect(screen.getByText(/recommended start: L2 — Field Operations/)).toBeInTheDocument()
   })
 
   test('opening a mission from the map shows its lessons with lock states, and Start opens the training page', () => {
     render(<App />)
     fireEvent.click(screen.getByText('New recruit'))
 
-    fireEvent.click(screen.getByText('M1')) // map node label
-    expect(screen.getByText('Mission 1 — First Contact')).toBeInTheDocument()
-    expect(screen.getByText(/M1L1 — git clone/)).toBeInTheDocument()
+    fireEvent.click(screen.getByText('L1')) // map node label
+    expect(screen.getByText('Level 1 — Recruit Training')).toBeInTheDocument()
+    expect(screen.getByText(/L1M1 — git clone/)).toBeInTheDocument()
     // second lesson is locked for a fresh recruit
-    expect(screen.getByText(/M1L2 — git pull/).closest('button')).toBeDisabled()
+    expect(screen.getByText(/L1M2 — git pull/).closest('button')).toBeDisabled()
 
     fireEvent.click(screen.getByText(/▶ Start/))
     expect(screen.getByRole('heading', { name: 'git clone' })).toBeInTheDocument()

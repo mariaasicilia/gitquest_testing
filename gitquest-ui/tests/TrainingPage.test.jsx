@@ -3,6 +3,7 @@ import '@testing-library/jest-dom'
 import { ProgressProvider } from '../src/context/ProgressContext'
 import TrainingPage from '../src/components/TrainingPage'
 import { STORAGE_KEY } from '../src/context/context'
+import { MISSIONS } from '../src/missions/Missions'
 
 const renderLesson = (levelId, questId, props = {}) =>
   render(
@@ -33,14 +34,14 @@ afterEach(() => {
 
 describe('TrainingPage — single-command battle', () => {
   test('renders tutorial content and the battle scenario', () => {
-    renderLesson('M2L1', 'M2')
+    renderLesson('L1M3', 'L1')
     expect(screen.getByRole('heading', { name: 'git status' })).toBeInTheDocument()
     expect(screen.getByText(/HANDLER BRIEFING/)).toBeInTheDocument()
     expect(screen.getByLabelText('command input')).toBeInTheDocument()
   })
 
   test('a correct first-try answer completes the lesson with a 100 score and persists it', () => {
-    renderLesson('M2L1', 'M2')
+    renderLesson('L1M3', 'L1')
     typeAndExecute('git status')
     expect(screen.getByText(/COMMAND ACCEPTED/)).toBeInTheDocument()
 
@@ -49,18 +50,18 @@ describe('TrainingPage — single-command battle', () => {
     expect(screen.getByText(/ASSESSMENT SCORE: 100 \/ 100/)).toBeInTheDocument()
 
     const stored = JSON.parse(localStorage.getItem(STORAGE_KEY))
-    expect(stored.completedLevels).toContain('M2L1')
-    expect(stored.scores['M2L1']).toBe(100)
+    expect(stored.completedLevels).toContain('L1M3')
+    expect(stored.scores['L1M3']).toBe(100)
   })
 
   test('empty input gets a specific message, not a generic rejection', () => {
-    renderLesson('M2L1', 'M2')
+    renderLesson('L1M3', 'L1')
     fireEvent.click(screen.getByText('Execute'))
     expect(screen.getByText(/didn\u2019t enter a command/)).toBeInTheDocument()
   })
 
   test('a wrong command gets a targeted diagnostic and allows retry', () => {
-    renderLesson('M2L1', 'M2')
+    renderLesson('L1M3', 'L1')
     typeAndExecute('git log')
     expect(screen.getByText(/won\u2019t accomplish this objective/)).toBeInTheDocument()
 
@@ -70,7 +71,7 @@ describe('TrainingPage — single-command battle', () => {
   })
 
   test('hint timing: reveal button after 1 wrong attempt, automatic after 2, and the score reflects it', () => {
-    renderLesson('M2L1', 'M2')
+    renderLesson('L1M3', 'L1')
     expect(screen.queryByText(/^HINT:/)).not.toBeInTheDocument()
 
     typeAndExecute('git wrong')
@@ -88,74 +89,123 @@ describe('TrainingPage — single-command battle', () => {
   })
 
   test('a lesson-specific reject rule shows its teaching message (git add .)', () => {
-    renderLesson('M1L3', 'M1')
+    renderLesson('L1M4', 'L1')
     typeAndExecute('git add .')
     expect(screen.getByText(/stages EVERYTHING/)).toBeInTheDocument()
   })
 
   test('accepted variants pass (git switch for checkout)', () => {
-    renderLesson('M2L4', 'M2')
+    renderLesson('L1M10', 'L1')
     typeAndExecute('git switch decoy-operation')
     expect(screen.getByText(/COMMAND ACCEPTED/)).toBeInTheDocument()
   })
 
   test('completion offers Next lesson once completing this one unlocks it', () => {
     const onNextLevel = jest.fn()
-    renderLesson('M1L1', 'M1', { onNextLevel })
+    renderLesson('L1M1', 'L1', { onNextLevel })
     typeAndExecute('git clone https://github.com/us-cyber/shadow-breach.git')
     act(() => jest.runAllTimers())
     fireEvent.click(screen.getByText(/Next lesson/))
-    expect(onNextLevel).toHaveBeenCalledWith('M1L2', 'M1')
+    expect(onNextLevel).toHaveBeenCalledWith('L1M2', 'L1')
   })
 
   test('completion hides Next lesson when the next lesson is still locked (out-of-order replay in recruit mode)', () => {
     // A recruit replaying M2L1 (e.g. via imported progress) must not be able
     // to jump to a locked M2L2 from the completion panel.
-    localStorage.setItem(STORAGE_KEY, JSON.stringify({ completedLevels: ['M2L1'], mode: 'new' }))
-    renderLesson('M2L1', 'M2')
+    localStorage.setItem(STORAGE_KEY, JSON.stringify({ completedLevels: ['L1M3'], mode: 'new' }))
+    renderLesson('L1M3', 'L1')
     typeAndExecute('git status')
     act(() => jest.runAllTimers())
     expect(screen.queryByText(/Next lesson/)).not.toBeInTheDocument()
   })
 
   test('unknown lesson id shows the missing-data screen instead of crashing', () => {
-    renderLesson('M9L9', 'M9')
+    renderLesson('Z9M9', 'Z9')
     expect(screen.getByText(/No training data found/)).toBeInTheDocument()
   })
 })
 
-describe('TrainingPage — capstone sequence battle', () => {
-  test('steps advance in order, wrong commands fail only the current step, and completion averages the scores', () => {
-    renderLesson('M5L1', 'M5')
-    expect(screen.getByText('STEP 1 / 7')).toBeInTheDocument()
+describe('TrainingPage — sequence battles (feature kept for future boss missions)', () => {
+  // The current storyline has no multi-step mission, but the sequence-battle
+  // engine remains supported. Exercise it against a synthetic lesson injected
+  // into the registry.
+  const syntheticBoss = {
+    id: 'T1M1',
+    cmd: 'sequence-test',
+    diff: 'hard',
+    title: 'sequence test',
+    subtitle: 'synthetic',
+    briefing: 'test',
+    sections: [{ heading: 'What it does', body: 'test' }],
+    battle: {
+      type: 'sequence',
+      steps: [
+        {
+          objective: 'Check the field',
+          scenario: 'First check state.',
+          expected: 'git status',
+          accept: ['git status'],
+          hint: 'status',
+          success: 'State confirmed.',
+        },
+        {
+          objective: 'Download only',
+          scenario: 'Fetch without merging.',
+          expected: 'git fetch',
+          accept: ['git fetch'],
+          reject: [{ cmd: 'git pull', message: 'STEP FAILED — download only.' }],
+          hint: 'fetch',
+          success: 'Downloaded.',
+        },
+      ],
+    },
+  }
 
-    // Step 1: correct
+  beforeEach(() => {
+    MISSIONS.T1 = { id: 'T1', x: 0, y: 0, title: 'Test — Synthetic', levels: { T1M1: syntheticBoss } }
+  })
+  afterEach(() => {
+    delete MISSIONS.T1
+  })
+
+  test('steps advance in order, step rejects fail only the current step, completion averages scores', () => {
+    renderLesson('T1M1', 'T1')
+    expect(screen.getByText('STEP 1 / 2')).toBeInTheDocument()
+
     typeAndExecute('git status')
     act(() => jest.advanceTimersByTime(2000))
-    expect(screen.getByText('STEP 2 / 7')).toBeInTheDocument()
+    expect(screen.getByText('STEP 2 / 2')).toBeInTheDocument()
 
-    // Step 2: the step-specific reject rule fires and the step does NOT advance
+    // step-specific reject fires; the step does NOT advance
     typeAndExecute('git pull')
     expect(screen.getByText(/STEP FAILED/)).toBeInTheDocument()
-    expect(screen.getByText('STEP 2 / 7')).toBeInTheDocument()
+    expect(screen.getByText('STEP 2 / 2')).toBeInTheDocument()
 
-    // Recover and finish the operation
-    const remaining = [
-      'git fetch',
-      'git checkout firewall-hotfix',
-      'git add firewall-patch.txt',
-      'git commit -m "my own commit message"',
-      'git push',
-      'git pull',
-    ]
-    for (const cmd of remaining) {
-      typeAndExecute(cmd)
-      act(() => jest.advanceTimersByTime(2000))
-    }
+    typeAndExecute('git fetch')
+    act(() => jest.advanceTimersByTime(2000))
 
     expect(screen.getByText(/OBJECTIVE SECURED/)).toBeInTheDocument()
-    // Six perfect steps + one 75 (the failed git pull step) → avg 96
-    expect(screen.getByText(/ASSESSMENT SCORE: 96 \/ 100/)).toBeInTheDocument()
-    expect(JSON.parse(localStorage.getItem(STORAGE_KEY)).completedLevels).toContain('M5L1')
+    // one perfect step (100) + one step with a wrong attempt (75) -> avg 88
+    expect(screen.getByText(/ASSESSMENT SCORE: 88 \/ 100/)).toBeInTheDocument()
+    expect(JSON.parse(localStorage.getItem(STORAGE_KEY)).completedLevels).toContain('T1M1')
+  })
+})
+
+describe('TrainingPage — level completion outro', () => {
+  test('finishing the last mission of a level shows the storyline celebration', () => {
+    const nine = ['L1M1','L1M2','L1M3','L1M4','L1M5','L1M6','L1M7','L1M8','L1M9']
+    localStorage.setItem(STORAGE_KEY, JSON.stringify({ completedLevels: nine, mode: 'new' }))
+    renderLesson('L1M10', 'L1')
+    typeAndExecute('git checkout decoy-operation')
+    act(() => jest.runAllTimers())
+    expect(screen.getByText(/Field Agent Certified/)).toBeInTheDocument()
+    expect(screen.getByText(/Level 2 clearance granted/)).toBeInTheDocument()
+  })
+
+  test('finishing a mid-level mission does not show the celebration', () => {
+    renderLesson('L1M1', 'L1')
+    typeAndExecute('git clone https://github.com/us-cyber/shadow-breach.git')
+    act(() => jest.runAllTimers())
+    expect(screen.queryByText(/Field Agent Certified/)).not.toBeInTheDocument()
   })
 })

@@ -8,39 +8,39 @@ import { MISSIONS, MISSION_ORDER } from '../src/missions/Missions'
 import { defaultProgress } from '../src/context/context'
 
 const allLevelIds = MISSION_ORDER.flatMap(id => Object.keys(MISSIONS[id].levels))
-const level1Ids = ['M1', 'M2'].flatMap(id => Object.keys(MISSIONS[id].levels))
+const level1Ids = Object.keys(MISSIONS.L1.levels)
 
 const withProgress = (extra) => ({ ...defaultProgress, ...extra })
 
 describe('stats — derived progress', () => {
-  test('the registry contains the full intended curriculum (10 + 3 + 3 + 1)', () => {
-    expect(totalLevels()).toBe(17)
+  test('the registry contains the full storyline curriculum (3 levels x 10 missions)', () => {
+    expect(totalLevels()).toBe(30)
     expect(level1Ids).toHaveLength(10)
   })
 
   test('0% / partial / 100% overall progress', () => {
     expect(overallPct(withProgress())).toBe(0)
-    expect(overallPct(withProgress({ completedLevels: ['M1L1'] }))).toBe(Math.round(100 / 17))
+    expect(overallPct(withProgress({ completedLevels: ['L1M1'] }))).toBe(Math.round(100 / 30))
     expect(overallPct(withProgress({ completedLevels: allLevelIds }))).toBe(100)
   })
 
   test('stale/unknown completions are ignored, not counted', () => {
-    const p = withProgress({ completedLevels: ['M1L1', 'DELETED-LEVEL'] })
+    const p = withProgress({ completedLevels: ['L1M1', 'DELETED-LEVEL'] })
     expect(completedCount(p)).toBe(1)
   })
 
-  test('per-mission progress', () => {
-    const p = withProgress({ completedLevels: ['M1L1', 'M1L2'] })
-    expect(missionProgress('M1', p)).toEqual({ completed: 2, total: 5, pct: 40 })
-    expect(missionProgress('M3', p)).toEqual({ completed: 0, total: 3, pct: 0 })
+  test('per-level progress', () => {
+    const p = withProgress({ completedLevels: ['L1M1', 'L1M2'] })
+    expect(missionProgress('L1', p)).toEqual({ completed: 2, total: 10, pct: 20 })
+    expect(missionProgress('L2', p)).toEqual({ completed: 0, total: 10, pct: 0 })
   })
 
   test('coins: 10 per lesson + 25 per completed mission; balance never negative', () => {
-    const m1 = Object.keys(MISSIONS.M1.levels)
+    const m1 = Object.keys(MISSIONS.L1.levels)
     const p = withProgress({ completedLevels: m1 })
     expect(missionsCompleted(p)).toBe(1)
-    expect(earnedCoins(p)).toBe(5 * 10 + 25)
-    expect(coinBalance(withProgress({ completedLevels: m1, spentCoins: 30 }))).toBe(45)
+    expect(earnedCoins(p)).toBe(10 * 10 + 25)
+    expect(coinBalance(withProgress({ completedLevels: m1, spentCoins: 30 }))).toBe(95)
     expect(coinBalance(withProgress({ completedLevels: [], spentCoins: 999 }))).toBe(0)
   })
 
@@ -52,7 +52,7 @@ describe('stats — derived progress', () => {
   })
 
   test('perfect and average scores', () => {
-    const p = withProgress({ scores: { M1L1: 100, M1L2: 50 } })
+    const p = withProgress({ scores: { L1M1: 100, L1M2: 50 } })
     expect(perfectScores(p)).toBe(1)
     expect(averageScore(p)).toBe(75)
     expect(averageScore(withProgress())).toBeNull()
@@ -65,12 +65,12 @@ describe('achievements — earn rules', () => {
   })
 
   test('First Blood after one completion', () => {
-    const a = updatedAchievements(withProgress({ completedLevels: ['M1L1'] }))
+    const a = updatedAchievements(withProgress({ completedLevels: ['L1M1'] }))
     expect(a['first-blood']).toBeDefined()
     expect(a['level1-cleared']).toBeUndefined()
   })
 
-  test('the Level 1 completion badge requires all ten M1+M2 lessons', () => {
+  test('the Level 1 completion badge requires all ten L1 missions', () => {
     const nine = level1Ids.slice(0, 9)
     expect(updatedAchievements(withProgress({ completedLevels: nine }))['level1-cleared']).toBeUndefined()
     const a = updatedAchievements(withProgress({ completedLevels: level1Ids }))
@@ -78,8 +78,8 @@ describe('achievements — earn rules', () => {
   })
 
   test('Clean Commit requires a perfect score', () => {
-    expect(updatedAchievements(withProgress({ completedLevels: ['M1L1'], scores: { M1L1: 75 } }))['clean-commit']).toBeUndefined()
-    expect(updatedAchievements(withProgress({ completedLevels: ['M1L1'], scores: { M1L1: 100 } }))['clean-commit']).toBeDefined()
+    expect(updatedAchievements(withProgress({ completedLevels: ['L1M1'], scores: { L1M1: 75 } }))['clean-commit']).toBeUndefined()
+    expect(updatedAchievements(withProgress({ completedLevels: ['L1M1'], scores: { L1M1: 100 } }))['clean-commit']).toBeDefined()
   })
 
   test('finishing everything earns the legendary badge', () => {

@@ -1,4 +1,4 @@
-import { render, screen, fireEvent } from '@testing-library/react'
+import { render, screen, fireEvent, within } from '@testing-library/react'
 import '@testing-library/jest-dom'
 import { PLACEMENT_QUESTIONS, PLACEMENT_THRESHOLD, scorePlacement } from '../src/game/placement'
 import PlacementQuiz from '../src/components/PlacementQuiz'
@@ -10,9 +10,9 @@ beforeEach(() => localStorage.clear())
 describe('scorePlacement', () => {
   const allCorrect = Object.fromEntries(PLACEMENT_QUESTIONS.map(q => [q.id, q.answer]))
 
-  test('perfect score passes and recommends Level 2 (M3)', () => {
+  test('perfect score passes and recommends Level 2', () => {
     const r = scorePlacement(allCorrect)
-    expect(r).toMatchObject({ correct: 8, total: 8, pct: 100, passed: true, recommendedMission: 'M3' })
+    expect(r).toMatchObject({ correct: 8, total: 8, pct: 100, passed: true, recommendedMission: 'L2' })
   })
 
   test('exactly 75% passes (6/8), just below fails (5/8)', () => {
@@ -27,7 +27,7 @@ describe('scorePlacement', () => {
     fiveRight[q3.id] = (q3.answer + 1) % q3.choices.length
     const r = scorePlacement(fiveRight)
     expect(r.passed).toBe(false)
-    expect(r.recommendedMission).toBe('M1')
+    expect(r.recommendedMission).toBe('L1')
   })
 
   test('unanswered questions count as wrong, never throw', () => {
@@ -48,7 +48,7 @@ describe('PlacementQuiz component', () => {
     renderQuiz()
     expect(screen.getByText('Submit answers')).toBeDisabled()
     for (const q of PLACEMENT_QUESTIONS) {
-      fireEvent.click(screen.getByText(q.choices[q.answer]))
+      fireEvent.click(within(screen.getByTestId(q.id)).getByText(q.choices[q.answer]))
     }
     expect(screen.getByText('Submit answers')).toBeEnabled()
   })
@@ -56,14 +56,14 @@ describe('PlacementQuiz component', () => {
   test('a perfect submission shows the pass result and persists the recommendation', () => {
     renderQuiz()
     for (const q of PLACEMENT_QUESTIONS) {
-      fireEvent.click(screen.getByText(q.choices[q.answer]))
+      fireEvent.click(within(screen.getByTestId(q.id)).getByText(q.choices[q.answer]))
     }
     fireEvent.click(screen.getByText('Submit answers'))
     expect(screen.getByText(/8 \/ 8 — 100%/)).toBeInTheDocument()
-    expect(screen.getByText(/Recommended start: M3/)).toBeInTheDocument()
+    expect(screen.getByText(/Recommended start: L2/)).toBeInTheDocument()
 
     const stored = JSON.parse(localStorage.getItem(STORAGE_KEY))
-    expect(stored.placement.recommendedMission).toBe('M3')
+    expect(stored.placement.recommendedMission).toBe('L2')
     expect(stored.placement.pct).toBe(100)
   })
 
@@ -71,7 +71,7 @@ describe('PlacementQuiz component', () => {
     renderQuiz()
     PLACEMENT_QUESTIONS.forEach((q, i) => {
       const idx = i === 0 ? (q.answer + 1) % q.choices.length : q.answer
-      fireEvent.click(screen.getAllByText(q.choices[idx])[0])
+      fireEvent.click(within(screen.getByTestId(q.id)).getByText(q.choices[idx]))
     })
     fireEvent.click(screen.getByText('Submit answers'))
     expect(screen.getByText(new RegExp('WHY: ' + PLACEMENT_QUESTIONS[0].explanation.slice(0, 30).replace(/[.*+?^${}()|[\]\\]/g, '\\$&')))).toBeInTheDocument()
