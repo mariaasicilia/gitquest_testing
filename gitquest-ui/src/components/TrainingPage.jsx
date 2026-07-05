@@ -2,7 +2,7 @@ import { useState } from 'react'
 import { MISSIONS } from '../missions/Missions'
 import { useProgress } from '../context/useProgress'
 import { validateCommand } from '../game/validateCommand'
-import { battleScore } from '../game/stats'
+import { battleScore, isMissionComplete } from '../game/stats'
 import { nextLevelAfter, isLevelUnlocked } from '../game/unlocks'
 
 function TerminalBlock({ lines }) {
@@ -221,6 +221,10 @@ export default function TrainingPage({ levelId, questId, onBack, onComplete, onN
 
   const next = nextLevelAfter(levelId)
   const nextUnlocked = next && isLevelUnlocked(next.levelId, progress)
+  const quest = MISSIONS[questId]
+  // Show the storyline's level-completion outro when this completion clears
+  // the whole level (all its missions complete).
+  const levelJustCleared = result && isMissionComplete(questId, progress)
 
   const handleBattleComplete = (score) => {
     completeLevel(levelId, score)
@@ -325,6 +329,11 @@ export default function TrainingPage({ levelId, questId, onBack, onComplete, onN
               ASSESSMENT SCORE: {result.score} / 100
             </div>
             <div style={{ fontFamily: 'monospace', fontSize: 12, color: '#4a6fa5', marginBottom: '1.5rem' }}>Training module complete.</div>
+            {levelJustCleared && quest.outro && (
+              <div style={{ textAlign: 'left', whiteSpace: 'pre-line', fontFamily: 'monospace', fontSize: 12, color: '#c8daf0', lineHeight: 1.8, background: '#080c17', border: '1px solid #00ff8833', borderRadius: 10, padding: '1.25rem', margin: '0 auto 1.5rem', maxWidth: 560 }}>
+                {quest.outro}
+              </div>
+            )}
             <div style={{ display: 'flex', gap: 10, justifyContent: 'center' }}>
               <button onClick={onComplete} style={{ background: 'none', border: '1px solid #1a2a45', color: '#4a6fa5', borderRadius: 8, padding: '10px 20px', cursor: 'pointer', fontFamily: 'monospace', fontSize: 13 }}>
                 Mission map

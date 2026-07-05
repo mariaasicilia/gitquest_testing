@@ -2,7 +2,7 @@
 //
 // A short scored multiple-choice quiz. Scoring is a pure function; the 75%
 // threshold (approved policy) decides whether the learner is recommended to
-// start at Level 2 (Mission 3) or at the beginning. Field agents keep free
+// start at Level 2 (Field Operations) or at the beginning. Field agents keep free
 // navigation regardless — the placement result is a recommendation.
 
 export const PLACEMENT_THRESHOLD = 0.75
@@ -17,15 +17,10 @@ export const PLACEMENT_QUESTIONS = [
   },
   {
     id: 'q2',
-    prompt: 'What is the difference between git pull and git fetch?',
-    choices: [
-      'They are identical',
-      'fetch downloads and merges; pull only downloads',
-      'pull downloads and merges; fetch only downloads',
-      'pull works on branches; fetch works on files',
-    ],
-    answer: 2,
-    explanation: 'git fetch downloads remote changes without touching your working files. git pull is a fetch followed immediately by a merge into your current branch.',
+    prompt: 'You edited a file but have NOT staged it. Which command shows the exact line-by-line changes compared to the last commit?',
+    choices: ['git status', 'git diff', 'git log', 'git show'],
+    answer: 1,
+    explanation: 'git diff compares your working directory to the last commit line by line. git status only lists which files changed, and git log shows commit history.',
   },
   {
     id: 'q3',
@@ -62,10 +57,10 @@ export const PLACEMENT_QUESTIONS = [
   },
   {
     id: 'q7',
-    prompt: 'You rewrote local history and must overwrite the remote branch. Which is the SAFEST way?',
-    choices: ['git push --force', 'git push -f', 'git push --force-with-lease', 'git push --overwrite'],
+    prompt: 'An uncommitted change to notes.txt turned out to be wrong. Which command discards it and restores the file to its last committed state?',
+    choices: ['git reset --hard origin', 'git rm notes.txt', 'git restore notes.txt', 'git revert notes.txt'],
     answer: 2,
-    explanation: '--force-with-lease refuses to run if someone else pushed since your last fetch, protecting teammates\u2019 work. Plain --force/-f overwrites unconditionally.',
+    explanation: 'git restore <file> reverts an uncommitted file to its last committed state. git revert targets commits (not files), and reset --hard would wipe ALL your changes, not just this file.',
   },
   {
     id: 'q8',
@@ -92,6 +87,6 @@ export function scorePlacement(answers, questions = PLACEMENT_QUESTIONS) {
     total,
     pct,
     passed,
-    recommendedMission: passed ? 'M3' : 'M1',
+    recommendedMission: passed ? 'L2' : 'L1',
   }
 }

@@ -1,17 +1,17 @@
-import { mission1 } from './mission1/Mission1'
-import { mission2 } from './mission2/Mission2'
-import { mission3 } from './mission3/Mission3'
-import { mission4 } from './mission4/Mission4'
-import { mission5 } from './mission5/Mission5'
+import { level1 } from './level1/Level1'
+import { level2 } from './level2/Level2'
+import { level3 } from './level3/Level3'
 
-// Canonical mission sequence. Unlocking, progress, and "next lesson" logic
+// Canonical mission sequence per the Operation Shadow Breach storyline
+// (3 levels x 10 missions). Unlocking, progress, and "next lesson" logic
 // all derive from this order — never from flags stored on the mission data.
-export const MISSION_ORDER = ['M1', 'M2', 'M3', 'M4', 'M5']
+// NOTE: the code's registry shape calls each Level a "mission" containing
+// "levels" — storyline Levels map to MISSIONS entries, storyline Missions
+// map to the lesson entries inside them.
+export const MISSION_ORDER = ['L1', 'L2', 'L3']
 
 export const MISSIONS = {
-  M1: mission1,
-  M2: mission2,
-  M3: mission3,
-  M4: mission4,
-  M5: mission5,
+  L1: level1,
+  L2: level2,
+  L3: level3,
 }
