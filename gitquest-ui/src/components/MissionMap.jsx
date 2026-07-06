@@ -191,24 +191,27 @@ export default function MissionMap({ onBack, onStartLevel, onOpenArsenal, onOpen
               stroke={i < 2 ? '#1a3a2a' : '#1a2a45'} strokeWidth="1.5" strokeDasharray="5,4" />
           ))}
           {Object.values(MISSIONS).map(q => {
+
             const levelCount = Object.values(q.levels).length;
             const doneCount = Object.values(q.levels).filter(l => isLevelComplete(l.id)).length;
             const missionDone = doneCount === levelCount;
+            const missionActive = !missionDone && doneCount > 0;
+
             return (
               <g key={q.id} onClick={() => handleQuestClick(q)}
                 style={{ cursor: q.locked ? 'not-allowed' : 'pointer' }}>
                 <rect x={q.x} y={q.y} width="40" height="40" rx="6"
-                  fill={q.active ? '#003322' : missionDone ? '#0d1f15' : '#0d1526'}
-                  stroke={q.active ? '#00ff88' : missionDone ? '#00ff8844' : '#1a2a45'}
-                  strokeWidth={q.active ? 1.5 : 1}
+                  fill={missionActive ? '#003322' : missionDone ? '#0d1f15' : '#0d1526'}
+                  stroke={missionActive ? '#00ff88' : missionDone ? '#00ff8844' : '#1a2a45'}
+                  strokeWidth={missionActive ? 1.5 : 1}
                 />
                 <text x={q.x + 20} y={q.y + 25} textAnchor="middle" fontSize="13"
-                  fill={q.active ? '#00ff88' : missionDone ? '#00ff88' : '#1a2a45'}
+                  fill={missionActive ? '#00ff88' : missionDone ? '#00ff88' : '#1a2a45'}
                   fontFamily="monospace">
-                  {q.active ? '◎' : missionDone ? '✓' : '⬡'}
+                  {missionActive ? '◎' : missionDone ? '✓' : '⬡'}
                 </text>
                 <text x={q.x + 20} y={q.y + 54} textAnchor="middle" fontSize="10"
-                  fill={q.active ? '#00cc66' : missionDone ? '#00ff8877' : '#2a3a55'}
+                  fill={missionActive ? '#00cc66' : missionDone ? '#00ff8877' : '#2a3a55'}
                   fontFamily="monospace">
                   {q.id}
                 </text>
