@@ -195,7 +195,7 @@ export default function MissionMap({ onBack, onStartLevel, onOpenArsenal, onOpen
             const levelCount = Object.values(q.levels).length;
             const doneCount = Object.values(q.levels).filter(l => isLevelComplete(l.id)).length;
             const missionDone = doneCount === levelCount;
-            const missionActive = !missionDone && doneCount > 0;
+            const missionActive = q.id === "M1" || !missionDone && doneCount > 0;
 
             return (
               <g key={q.id} onClick={() => handleQuestClick(q)}
