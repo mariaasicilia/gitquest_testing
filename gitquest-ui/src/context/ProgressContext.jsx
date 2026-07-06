@@ -146,6 +146,3 @@ export function ProgressProvider({ children }) {
 
   return <ProgressContext.Provider value={value}>{children}</ProgressContext.Provider>;
 }
-
-// Legacy re-export — remove once all consumers import from context/useProgress
-export { useProgress } from './useProgress'
