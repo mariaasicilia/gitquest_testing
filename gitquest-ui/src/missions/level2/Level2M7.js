@@ -1,7 +1,7 @@
 export const level2m7 = {
   id: 'L2M7',
   cmd: 'git branch -a',
-  diff: 'easy',
+  diff: 'med',
   title: 'git branch -a',
   subtitle: 'Map every active field team',
   briefing: `Several agents have opened new investigation threads simultaneously. Get a complete list of every branch — both local and remote — to assess the full scope of the operation.`,

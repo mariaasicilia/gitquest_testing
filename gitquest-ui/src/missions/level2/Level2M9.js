@@ -1,7 +1,7 @@
 export const level2m9 = {
   id: 'L2M9',
   cmd: 'git reset --hard',
-  diff: 'hard',
+  diff: 'med',
   title: 'git reset --hard',
   subtitle: 'Destroy the draft before it leaves your desk',
   briefing: `You committed to the wrong branch entirely — before pushing. Erase the last commit completely and return your workspace to its previous clean state.`,

@@ -1,7 +1,7 @@
 export const level2m6 = {
   id: 'L2M6',
   cmd: 'git tag',
-  diff: 'easy',
+  diff: 'med',
   title: 'git tag',
   subtitle: 'Stamp the milestone',
   briefing: `Your team has completed the first phase of the investigation. Mark this moment in the repository's history so it can always be referenced as the first confirmed breakthrough.`,

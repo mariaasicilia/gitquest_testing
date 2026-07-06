@@ -1,7 +1,7 @@
 export const level1m9 = {
   id: 'L1M9',
   cmd: 'git branch',
-  diff: 'medium',
+  diff: 'easy',
   title: 'git branch',
   subtitle: 'Create a new, independent line of development',
   briefing: `HQ wants you to test a decoy operation to lure Shadow Breach into a trap, but you can't risk corrupting the main investigation. Create a separate branch for the operation.`,
