@@ -1,7 +1,7 @@
-export const mission1level5 = {
-  id: 'M1L5',
+export const level2m3 = {
+  id: 'L2M3',
   cmd: 'git commit --amend --no-edit',
-  diff: 'medium',
+  diff: 'med',
   title: 'git commit --amend --no-edit',
   subtitle: 'Update the most recent commit without changing its message',
   briefing: `Minutes after submitting your report, another analyst notices that an important forensic log file was accidentally omitted. Fortunately, the report hasn't been archived yet — you can still fix it.`,
