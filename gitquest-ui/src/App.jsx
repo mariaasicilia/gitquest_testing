@@ -54,6 +54,7 @@ function AppShell() {
           onStartLevel={openLevel} />}
       {screen === 'training' && activeLevel && (
         <TrainingPage
+          key={activeLevel.levelId}
           levelId={activeLevel.levelId}
           questId={activeLevel.questId}
           onBack={() => setScreen('map')}

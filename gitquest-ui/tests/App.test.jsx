@@ -1,4 +1,4 @@
-import { render, screen, fireEvent } from '@testing-library/react'
+import { render, screen, fireEvent, act } from '@testing-library/react'
 import '@testing-library/jest-dom'
 import App from '../src/App'
 
@@ -49,5 +49,33 @@ describe('App shell routing', () => {
     fireEvent.click(screen.getByText(/▶ Start/))
     expect(screen.getByRole('heading', { name: 'git clone' })).toBeInTheDocument()
     expect(screen.getByLabelText('command input')).toBeInTheDocument()
+  })
+})
+
+describe('App — advancing to the next lesson resets the training view (regression)', () => {
+  beforeEach(() => jest.useFakeTimers())
+  afterEach(() => jest.useRealTimers())
+
+  test('Next lesson shows the new lesson, not the previous completion panel', () => {
+    localStorage.setItem('gitquest-progress', JSON.stringify({ mode: 'vet', placement: { correct: 8, total: 8, pct: 100, passed: true, recommendedMission: 'L2' } }))
+    render(<App />)
+    fireEvent.click(screen.getByText('Field agent'))
+
+    fireEvent.click(screen.getByText('L1'))
+    fireEvent.click(screen.getByText(/\u25B6 Start/))
+
+    // Solve L1M1 (git clone)
+    fireEvent.change(screen.getByLabelText('command input'), { target: { value: 'git clone https://github.com/us-cyber/shadow-breach.git' } })
+    fireEvent.click(screen.getByText('Execute'))
+    act(() => jest.runAllTimers())
+    expect(screen.getByText(/OBJECTIVE SECURED/)).toBeInTheDocument()
+
+    // Advance — the view must reset to L1M2 with a fresh command input,
+    // not carry over the previous OBJECTIVE SECURED panel.
+    fireEvent.click(screen.getByText(/Next lesson/))
+    expect(screen.queryByText(/OBJECTIVE SECURED/)).not.toBeInTheDocument()
+    expect(screen.getByRole('heading', { name: 'git pull' })).toBeInTheDocument()
+    expect(screen.getByLabelText('command input')).toBeInTheDocument()
+    expect(screen.getByLabelText('command input').value).toBe('')
   })
 })
