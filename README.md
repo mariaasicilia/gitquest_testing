@@ -34,6 +34,7 @@ npm run test
 
 ## Documentation map
 
-- Product scope, requirements, backlog, and decisions: `HANDOFF.md` (project handoff) and `docs/PROJECT-STATUS.md` (current implementation status against that handoff).
+- **Start here:** `HANDOFF.md` — project state, decisions, and what needs doing next.
+- Requirement-by-requirement status: `docs/PROJECT-STATUS.md`.
 - Test evidence: `docs/TEST-LOG.md`.
 - Application internals: `gitquest-ui/README.md`.
