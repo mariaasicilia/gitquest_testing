@@ -4,7 +4,7 @@ import { useProgress } from '../context/useProgress'
 import { MISSIONS } from '../missions/Missions'
 
 // Placement assessment for the Field agent route (FR-06, S3-02).
-// Scored multiple-choice; ≥75% recommends starting at Level 2 (Mission 3).
+// Scored multiple-choice; ≥75% recommends starting at Level 2 (Field Operations).
 // Wrong answers get an explanation after submission. Skippable — field
 // agents keep free navigation either way.
 export default function PlacementQuiz({ onDone }) {
@@ -34,7 +34,7 @@ export default function PlacementQuiz({ onDone }) {
         const showResult = result !== null
         const isCorrect = chosen === q.answer
         return (
-          <div key={q.id} style={{ marginBottom: '1.75rem', background: '#0d1526', border: '1px solid #1a2a45', borderRadius: 10, padding: '1.25rem' }}>
+          <div key={q.id} data-testid={q.id} style={{ marginBottom: '1.75rem', background: '#0d1526', border: '1px solid #1a2a45', borderRadius: 10, padding: '1.25rem' }}>
             <div style={{ fontSize: 13, color: '#c8daf0', fontFamily: 'monospace', lineHeight: 1.7, marginBottom: '0.9rem' }}>
               <span style={{ color: '#4a6fa5' }}>Q{qi + 1}. </span>{q.prompt}
             </div>
