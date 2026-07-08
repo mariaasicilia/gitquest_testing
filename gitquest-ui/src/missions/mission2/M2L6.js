@@ -1,5 +1,5 @@
-export const level2m9 = {
-  id: 'L2M9',
+export const m2l6 = {
+  id: 'M2L6',
   cmd: 'git reset --hard',
   diff: 'med',
   title: 'git reset --hard',
@@ -29,7 +29,7 @@ export const level2m9 = {
       heading: 'Watch out for',
       warnings: [
         '--hard is DESTRUCTIVE: uncommitted changes and the erased commit\u2019s work are gone from your working directory.',
-        'Only reset commits that have NOT been pushed. For pushed commits, use git revert instead (previous mission).',
+        'Only reset commits that have NOT been pushed. For pushed commits, use git revert instead (previous lesson).',
       ],
     },
   ],
