@@ -1,7 +1,7 @@
-export const level2m4 = {
-  id: 'L2M4',
+export const m1l6 = {
+  id: 'M1L6',
   cmd: 'git push',
-  diff: 'med',
+  diff: 'easy',
   title: 'git push',
   subtitle: 'Publish your local commits to the shared remote repository',
   briefing: `Your local investigation has produced solid intel — but right now it only exists on your machine. HQ and the other field agents can't see any of it until you publish your commits to the shared remote server.`,
@@ -37,7 +37,7 @@ export const level2m4 = {
   battle: {
     scenario: `You've committed your analysis of the command server locally on main, and the remote hasn't changed since you last synced. HQ needs your commits on the shared server now. Publish your local work.`,
     expected: 'git push',
-    accept: ['git push origin main'],
+    accept: ['git push', 'git push origin main'],
     hint: 'One word after git — your branch already tracks the remote.',
   },
 }

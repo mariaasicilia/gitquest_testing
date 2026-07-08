@@ -1,5 +1,5 @@
-export const level1m5 = {
-  id: 'L1M5',
+export const m1l5 = {
+  id: 'M1L5',
   cmd: 'git commit',
   diff: 'easy',
   title: 'git commit',
