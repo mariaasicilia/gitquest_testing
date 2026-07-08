@@ -1,7 +1,7 @@
-export const level1m7 = {
-  id: 'L1M7',
+export const m2l2 = {
+  id: 'M2L2',
   cmd: 'git diff',
-  diff: 'easy',
+  diff: 'med',
   title: 'git diff',
   subtitle: 'Compare the evidence line by line',
   briefing: `A file in your working directory has been modified, but you're not sure what changed. Before staging anything, review the exact differences so you can confirm the changes are legitimate.`,
