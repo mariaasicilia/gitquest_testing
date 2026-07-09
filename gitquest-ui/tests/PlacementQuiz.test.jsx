@@ -12,7 +12,7 @@ describe('scorePlacement', () => {
 
   test('perfect score passes and recommends Level 2', () => {
     const r = scorePlacement(allCorrect)
-    expect(r).toMatchObject({ correct: 8, total: 8, pct: 100, passed: true, recommendedMission: 'L2' })
+    expect(r).toMatchObject({ correct: 8, total: 8, pct: 100, passed: true, recommendedMission: 'M2' })
   })
 
   test('exactly 75% passes (6/8), just below fails (5/8)', () => {
@@ -27,7 +27,7 @@ describe('scorePlacement', () => {
     fiveRight[q3.id] = (q3.answer + 1) % q3.choices.length
     const r = scorePlacement(fiveRight)
     expect(r.passed).toBe(false)
-    expect(r.recommendedMission).toBe('L1')
+    expect(r.recommendedMission).toBe('M1')
   })
 
   test('unanswered questions count as wrong, never throw', () => {
@@ -60,10 +60,10 @@ describe('PlacementQuiz component', () => {
     }
     fireEvent.click(screen.getByText('Submit answers'))
     expect(screen.getByText(/8 \/ 8 — 100%/)).toBeInTheDocument()
-    expect(screen.getByText(/Recommended start: L2/)).toBeInTheDocument()
+    expect(screen.getByText(/Recommended start: M2/)).toBeInTheDocument()
 
     const stored = JSON.parse(localStorage.getItem(STORAGE_KEY))
-    expect(stored.placement.recommendedMission).toBe('L2')
+    expect(stored.placement.recommendedMission).toBe('M2')
     expect(stored.placement.pct).toBe(100)
   })
 

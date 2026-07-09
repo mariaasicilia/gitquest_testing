@@ -12,16 +12,16 @@ function Harness() {
     <div>
       <div data-testid="completed">{progress.completedLevels.join(',')}</div>
       <div data-testid="mode">{String(progress.mode)}</div>
-      <div data-testid="score">{String(progress.scores['L1M1'])}</div>
+      <div data-testid="score">{String(progress.scores['M1L1'])}</div>
       <div data-testid="achievements">{Object.keys(progress.achievements).join(',')}</div>
       <div data-testid="inventory">{progress.inventory.join(',')}</div>
       <div data-testid="spent">{progress.spentCoins}</div>
       <div data-testid="placement">{progress.placement ? progress.placement.recommendedMission : 'none'}</div>
-      <button onClick={() => completeLevel('L1M1', 100)}>complete-m1l1</button>
-      <button onClick={() => completeLevel('L1M1', 50)}>complete-m1l1-again-lower</button>
+      <button onClick={() => completeLevel('M1L1', 100)}>complete-m1l1</button>
+      <button onClick={() => completeLevel('M1L1', 50)}>complete-m1l1-again-lower</button>
       <button onClick={() => setMode('vet')}>set-vet</button>
       <button onClick={() => purchaseItem(1, 30)}>buy-item</button>
-      <button onClick={() => setPlacement({ correct: 7, total: 8, pct: 88, passed: true, recommendedMission: 'L2' })}>place</button>
+      <button onClick={() => setPlacement({ correct: 7, total: 8, pct: 88, passed: true, recommendedMission: 'M2' })}>place</button>
       <button onClick={resetProgress}>reset</button>
     </div>
   )
@@ -35,7 +35,7 @@ describe('ProgressContext', () => {
   test('completing a lesson updates state, records the score, and earns First Blood', () => {
     renderHarness()
     fireEvent.click(screen.getByText('complete-m1l1'))
-    expect(screen.getByTestId('completed')).toHaveTextContent('L1M1')
+    expect(screen.getByTestId('completed')).toHaveTextContent('M1L1')
     expect(screen.getByTestId('score')).toHaveTextContent('100')
     expect(screen.getByTestId('achievements').textContent).toContain('first-blood')
     expect(screen.getByTestId('achievements').textContent).toContain('clean-commit')
@@ -45,7 +45,7 @@ describe('ProgressContext', () => {
     renderHarness()
     fireEvent.click(screen.getByText('complete-m1l1'))
     fireEvent.click(screen.getByText('complete-m1l1-again-lower'))
-    expect(screen.getByTestId('completed').textContent).toBe('L1M1')
+    expect(screen.getByTestId('completed').textContent).toBe('M1L1')
     expect(screen.getByTestId('score')).toHaveTextContent('100')
   })
 
@@ -56,11 +56,11 @@ describe('ProgressContext', () => {
     unmount()
 
     const stored = JSON.parse(localStorage.getItem(STORAGE_KEY))
-    expect(stored.completedLevels).toEqual(['L1M1'])
+    expect(stored.completedLevels).toEqual(['M1L1'])
     expect(stored.mode).toBe('vet')
 
     renderHarness()
-    expect(screen.getByTestId('completed')).toHaveTextContent('L1M1')
+    expect(screen.getByTestId('completed')).toHaveTextContent('M1L1')
     expect(screen.getByTestId('mode')).toHaveTextContent('vet')
   })
 
@@ -84,12 +84,12 @@ describe('ProgressContext', () => {
 
     // Manufacture enough coins by seeding storage, remount, then buy once.
     const stored = JSON.parse(localStorage.getItem(STORAGE_KEY))
-    stored.completedLevels = ['L1M1', 'L1M2', 'L1M3']
+    stored.completedLevels = ['M1L1', 'M1L2', 'M1L3']
     localStorage.setItem(STORAGE_KEY, JSON.stringify(stored))
   })
 
   test('a funded purchase succeeds exactly once and persists spentCoins', () => {
-    localStorage.setItem(STORAGE_KEY, JSON.stringify({ completedLevels: ['L1M1', 'L1M2', 'L1M3'] }))
+    localStorage.setItem(STORAGE_KEY, JSON.stringify({ completedLevels: ['M1L1', 'M1L2', 'M1L3'] }))
     renderHarness()
     fireEvent.click(screen.getByText('buy-item'))
     expect(screen.getByTestId('inventory')).toHaveTextContent('1')
@@ -102,7 +102,7 @@ describe('ProgressContext', () => {
   test('placement result is stored with a date and reset clears everything', () => {
     renderHarness()
     fireEvent.click(screen.getByText('place'))
-    expect(screen.getByTestId('placement')).toHaveTextContent('L2')
+    expect(screen.getByTestId('placement')).toHaveTextContent('M2')
 
     fireEvent.click(screen.getByText('complete-m1l1'))
     fireEvent.click(screen.getByText('reset'))

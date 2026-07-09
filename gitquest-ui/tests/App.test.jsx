@@ -12,7 +12,7 @@ describe('App shell routing', () => {
     fireEvent.click(screen.getByText('New recruit'))
     expect(screen.getByText(/OVERALL PROGRESS — 0%/)).toBeInTheDocument()
     expect(screen.getByText('NEW RECRUIT')).toBeInTheDocument()
-    expect(screen.getByText(/🎖 0\/3/)).toBeInTheDocument()
+    expect(screen.getByText(/🎖 0\/4/)).toBeInTheDocument()
     expect(screen.getByText(/💰 0/)).toBeInTheDocument()
   })
 
@@ -28,23 +28,23 @@ describe('App shell routing', () => {
   test('a returning field agent with a stored placement result goes straight to the map with the recommendation banner', () => {
     localStorage.setItem('gitquest-progress', JSON.stringify({
       mode: 'vet',
-      placement: { correct: 7, total: 8, pct: 88, passed: true, recommendedMission: 'L2' },
+      placement: { correct: 7, total: 8, pct: 88, passed: true, recommendedMission: 'M2' },
     }))
     render(<App />)
     fireEvent.click(screen.getByText('Field agent'))
     expect(screen.queryByText('Placement assessment')).not.toBeInTheDocument()
-    expect(screen.getByText(/recommended start: L2 — Field Operations/)).toBeInTheDocument()
+    expect(screen.getByText(/recommended start: M2 — Damage Control: Reading & Undoing/)).toBeInTheDocument()
   })
 
   test('opening a mission from the map shows its lessons with lock states, and Start opens the training page', () => {
     render(<App />)
     fireEvent.click(screen.getByText('New recruit'))
 
-    fireEvent.click(screen.getByText('L1')) // map node label
-    expect(screen.getByText('Level 1 — Recruit Training')).toBeInTheDocument()
-    expect(screen.getByText(/L1M1 — git clone/)).toBeInTheDocument()
+    fireEvent.click(screen.getByText('M1')) // map node label
+    expect(screen.getByText('Mission 1 — First Contact: The Daily Loop')).toBeInTheDocument()
+    expect(screen.getByText(/M1L1 — git clone/)).toBeInTheDocument()
     // second lesson is locked for a fresh recruit
-    expect(screen.getByText(/L1M2 — git pull/).closest('button')).toBeDisabled()
+    expect(screen.getByText(/M1L2 — git pull/).closest('button')).toBeDisabled()
 
     fireEvent.click(screen.getByText(/▶ Start/))
     expect(screen.getByRole('heading', { name: 'git clone' })).toBeInTheDocument()
@@ -57,11 +57,11 @@ describe('App — advancing to the next lesson resets the training view (regress
   afterEach(() => jest.useRealTimers())
 
   test('Next lesson shows the new lesson, not the previous completion panel', () => {
-    localStorage.setItem('gitquest-progress', JSON.stringify({ mode: 'vet', placement: { correct: 8, total: 8, pct: 100, passed: true, recommendedMission: 'L2' } }))
+    localStorage.setItem('gitquest-progress', JSON.stringify({ mode: 'vet', placement: { correct: 8, total: 8, pct: 100, passed: true, recommendedMission: 'M2' } }))
     render(<App />)
     fireEvent.click(screen.getByText('Field agent'))
 
-    fireEvent.click(screen.getByText('L1'))
+    fireEvent.click(screen.getByText('M1'))
     fireEvent.click(screen.getByText(/\u25B6 Start/))
 
     // Solve L1M1 (git clone)
@@ -77,5 +77,20 @@ describe('App — advancing to the next lesson resets the training view (regress
     expect(screen.getByRole('heading', { name: 'git pull' })).toBeInTheDocument()
     expect(screen.getByLabelText('command input')).toBeInTheDocument()
     expect(screen.getByLabelText('command input').value).toBe('')
+  })
+})
+
+describe('App — assignment grouping in the mission panel', () => {
+  test('the panel shows assignment headers and the Field Assignment finale', () => {
+    render(<App />)
+    fireEvent.click(screen.getByText('New recruit'))
+    fireEvent.click(screen.getByText('M1'))
+    expect(screen.getByText(/ASSIGNMENT 1.1 — GET THE INTEL/)).toBeInTheDocument()
+    expect(screen.getByText(/ASSIGNMENT 1.2 — REPORT IN/)).toBeInTheDocument()
+    expect(screen.getByText(/FIELD ASSIGNMENT — all commands, in sequence/)).toBeInTheDocument()
+    // the finale row exists and is locked for a fresh recruit
+    expect(screen.getByText(/M1FA — FIELD ASSIGNMENT/).closest('button')).toBeDisabled()
+    // frequency-first: push lives in Mission 1
+    expect(screen.getByText(/M1L6 — git push/)).toBeInTheDocument()
   })
 })
