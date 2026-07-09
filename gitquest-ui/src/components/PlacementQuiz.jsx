@@ -4,7 +4,7 @@ import { useProgress } from '../context/useProgress'
 import { MISSIONS } from '../missions/Missions'
 
 // Placement assessment for the Field agent route (FR-06, S3-02).
-// Scored multiple-choice; ≥75% recommends starting at Level 2 (Field Operations).
+// Scored multiple-choice; ≥75% recommends starting at Mission 2 (Damage Control).
 // Wrong answers get an explanation after submission. Skippable — field
 // agents keep free navigation either way.
 export default function PlacementQuiz({ onDone }) {
@@ -25,7 +25,7 @@ export default function PlacementQuiz({ onDone }) {
       <div style={{ fontSize: 10, color: '#4a6fa5', letterSpacing: '0.15em', fontFamily: 'monospace', marginBottom: 8 }}>FIELD AGENT INTAKE</div>
       <h1 style={{ fontSize: 22, fontWeight: 500, color: '#00ff88', fontFamily: 'monospace', marginBottom: 6 }}>Placement assessment</h1>
       <p style={{ fontSize: 13, color: '#4a6fa5', fontFamily: 'monospace', lineHeight: 1.7, marginBottom: '2rem' }}>
-        {PLACEMENT_QUESTIONS.length} questions. Score 75% or higher and HQ recommends you start at Level 2.
+        {PLACEMENT_QUESTIONS.length} questions. Score 75% or higher and HQ recommends you skip Mission 1 and start at Mission 2.
         As a field agent every mission is open to you regardless — this just tells you where to begin.
       </p>
 

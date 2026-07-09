@@ -22,6 +22,41 @@ function StarRating({ diff }) {
   )
 }
 
+function LevelRow({ level, questId, isLevelComplete, progress, onStartLevel, fieldAssignment = false }) {
+  const levelIsDone = isLevelComplete(level.id)
+  const unlocked = isLevelUnlocked(level.id, progress)
+  const clickable = unlocked || levelIsDone
+  const accent = fieldAssignment ? '#e4a020' : '#00ff88'
+
+  return (
+    <button
+      onClick={() => clickable && onStartLevel(level.id, questId)}
+      disabled={!clickable}
+      title={clickable ? (levelIsDone ? 'Replay this lesson' : 'Open this lesson') : 'Locked — complete the previous lessons first'}
+      style={{
+        display: 'flex', alignItems: 'center', justifyContent: 'space-between',
+        background: levelIsDone ? '#0d1f15' : fieldAssignment ? '#141005' : '#080c17',
+        border: `1px solid ${levelIsDone ? '#00ff8833' : fieldAssignment ? '#a0600055' : '#1a2a45'}`,
+        borderRadius: 8, padding: '10px 14px', width: '100%',
+        cursor: clickable ? 'pointer' : 'not-allowed',
+        opacity: clickable ? 1 : 0.45, textAlign: 'left',
+      }}>
+      <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
+        <span style={{ fontSize: 12, color: levelIsDone ? '#00ff88' : '#2a3a55', fontFamily: 'monospace', minWidth: 16 }}>
+          {levelIsDone ? '✓' : unlocked ? (fieldAssignment ? '⚔' : '○') : '🔒'}
+        </span>
+        <span style={{ fontSize: 13, color: levelIsDone ? '#00cc66' : unlocked ? (fieldAssignment ? accent : '#c8daf0') : '#4a6fa5', fontFamily: 'monospace' }}>
+          {level.id} — {level.cmd}
+        </span>
+        {levelIsDone && (
+          <span style={{ fontSize: 10, color: '#4a6fa5', fontFamily: 'monospace', border: '1px solid #1a2a45', borderRadius: 4, padding: '1px 6px' }}>↺ replay</span>
+        )}
+      </div>
+      <StarRating diff={level.diff} />
+    </button>
+  )
+}
+
 function MissionPanel({ quest, onClose, onStartLevel }) {
   const { isLevelComplete, progress } = useProgress()
   const { completed, total } = missionProgress(quest.id, progress)
@@ -59,42 +94,28 @@ function MissionPanel({ quest, onClose, onStartLevel }) {
           <div style={{ height: '100%', width: total > 0 ? `${(completed / total) * 100}%` : '0%', background: '#00ff88', borderRadius: 99, transition: 'width 0.4s' }} />
         </div>
 
-        {/* Levels — completed rows replay, unlocked rows open, locked rows are inert */}
+        {/* Levels grouped by assignment; the Field Assignment renders as the
+            mission finale. Falls back to a flat list if a mission has no
+            assignment metadata. */}
         <div style={{ display: 'flex', flexDirection: 'column', gap: 8, marginBottom: '1.5rem' }}>
-          {Object.values(quest.levels).map(level => {
-            const levelIsDone = isLevelComplete(level.id)
-            const unlocked = isLevelUnlocked(level.id, progress)
-            const clickable = unlocked || levelIsDone
-
-            return (
-              <button
-                key={level.id}
-                onClick={() => clickable && onStartLevel(level.id, quest.id)}
-                disabled={!clickable}
-                title={clickable ? (levelIsDone ? 'Replay this lesson' : 'Open this lesson') : 'Locked — complete the previous lessons first'}
-                style={{
-                  display: 'flex', alignItems: 'center', justifyContent: 'space-between',
-                  background: levelIsDone ? '#0d1f15' : '#080c17',
-                  border: `1px solid ${levelIsDone ? '#00ff8833' : '#1a2a45'}`,
-                  borderRadius: 8, padding: '10px 14px', width: '100%',
-                  cursor: clickable ? 'pointer' : 'not-allowed',
-                  opacity: clickable ? 1 : 0.45, textAlign: 'left',
-                }}>
-                <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
-                  <span style={{ fontSize: 12, color: levelIsDone ? '#00ff88' : '#2a3a55', fontFamily: 'monospace', minWidth: 16 }}>
-                    {levelIsDone ? '✓' : unlocked ? '○' : '🔒'}
-                  </span>
-                  <span style={{ fontSize: 13, color: levelIsDone ? '#00cc66' : unlocked ? '#c8daf0' : '#4a6fa5', fontFamily: 'monospace' }}>
-                    {level.id} — {level.cmd}
-                  </span>
-                  {levelIsDone && (
-                    <span style={{ fontSize: 10, color: '#4a6fa5', fontFamily: 'monospace', border: '1px solid #1a2a45', borderRadius: 4, padding: '1px 6px' }}>↺ replay</span>
-                  )}
+          {(quest.assignments ?? [{ id: `${quest.id}-all`, title: null, lessons: Object.keys(quest.levels).filter(id => id !== quest.fieldAssignment) }]).map(assignment => (
+            <div key={assignment.id} style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
+              {assignment.title && (
+                <div style={{ marginTop: 4 }}>
+                  <div style={{ fontSize: 10, letterSpacing: '0.1em', color: '#00ff8899', fontFamily: 'monospace' }}>{assignment.title.toUpperCase()}</div>
+                  {assignment.desc && <div style={{ fontSize: 10, color: '#4a6fa5', fontFamily: 'monospace', marginTop: 2 }}>{assignment.desc}</div>}
                 </div>
-                <StarRating diff={level.diff} />
-              </button>
-            )
-          })}
+              )}
+              {assignment.lessons.map(levelId => {
+                const level = quest.levels[levelId]
+                if (!level) return null
+                return (
+                  <LevelRow key={level.id} level={level} questId={quest.id}
+                    isLevelComplete={isLevelComplete} progress={progress} onStartLevel={onStartLevel} />
+                )
+              })}
+            </div>
+          ))}
         </div>
 
         {/* Footer */}
