@@ -1,5 +1,5 @@
-export const level2m5 = {
-  id: 'L2M5',
+export const m3l7 = {
+  id: 'M3L7',
   cmd: 'git merge',
   diff: 'med',
   title: 'git merge',
@@ -23,6 +23,10 @@ export const level2m5 = {
         { prompt: '$', cmd: 'git merge decoy-operation' },
         { output: 'Updating 4f2a91c..8c3d02e\nFast-forward\n decoy-plan.txt | 12 ++++++++++++\n 1 file changed, 12 insertions(+)' },
       ],
+    },
+    {
+      heading: 'In the real world: Pull Requests',
+      body: `Professional teams rarely run git merge directly on main. They open a Pull Request (PR) — a reviewed merge on the hosting platform (GitHub, GitLab). A teammate reads the diff, comments, approves, and THEN the platform performs exactly this merge. The command you're learning is what a PR does after approval; the review in front of it is how teams protect the record. HQ protocol: covert work reunifies only after peer sign-off.`,
     },
     {
       heading: 'Watch out for',

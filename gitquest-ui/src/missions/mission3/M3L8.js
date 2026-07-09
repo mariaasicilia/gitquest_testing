@@ -1,7 +1,7 @@
-export const level3m2 = {
-  id: 'L3M2',
+export const m3l8 = {
+  id: 'M3L8',
   cmd: 'git rebase',
-  diff: 'hard',
+  diff: 'med',
   title: 'git rebase',
   subtitle: 'Replay your branch\u2019s commits on top of another branch',
   briefing: `While you worked on the intel-analysis branch, main moved ahead with new agency-wide changes. Before your analysis can be reviewed, HQ wants your commits replayed on top of the LATEST main — a clean, linear history with no merge commit.`,
@@ -31,7 +31,7 @@ export const level3m2 = {
       warnings: [
         'Rebase REWRITES history — the replayed commits are new commits with new IDs.',
         'Never rebase commits that others have already based work on (e.g. a shared branch).',
-        'If a replayed commit conflicts with the new base, the rebase pauses and asks you to resolve it — that\u2019s the next mission.',
+        'If a replayed commit conflicts with the new base, the rebase pauses and asks you to resolve it, then continue with git rebase --continue.',
       ],
     },
   ],

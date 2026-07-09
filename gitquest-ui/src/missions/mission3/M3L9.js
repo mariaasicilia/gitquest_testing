@@ -1,5 +1,5 @@
-export const level2m10 = {
-  id: 'L2M10',
+export const m3l9 = {
+  id: 'M3L9',
   cmd: 'git branch -d',
   diff: 'med',
   title: 'git branch -d',
