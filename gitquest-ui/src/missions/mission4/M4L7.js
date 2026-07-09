@@ -1,5 +1,5 @@
-export const level3m7 = {
-  id: 'L3M7',
+export const m4l7 = {
+  id: 'M4L7',
   cmd: 'git reflog',
   diff: 'hard',
   title: 'git reflog',

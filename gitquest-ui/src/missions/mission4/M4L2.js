@@ -1,5 +1,5 @@
-export const level3m4 = {
-  id: 'L3M4',
+export const m4l2 = {
+  id: 'M4L2',
   cmd: 'git merge --squash',
   diff: 'hard',
   title: 'git merge --squash',
