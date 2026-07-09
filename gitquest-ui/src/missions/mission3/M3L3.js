@@ -1,5 +1,5 @@
-export const level2m1 = {
-  id: 'L2M1',
+export const m3l3 = {
+  id: 'M3L3',
   cmd: 'git stash',
   diff: 'med',
   title: 'git stash',
@@ -15,7 +15,7 @@ export const level2m1 = {
       blocks: [
         { code: 'git stash', desc: 'Shelve all uncommitted changes and clean the working directory' },
         { code: 'git stash list', desc: 'See everything currently stashed' },
-        { code: 'git stash pop', desc: 'Restore the most recent stash (next mission)' },
+        { code: 'git stash pop', desc: 'Restore the most recent stash (next lesson)' },
       ],
     },
     {

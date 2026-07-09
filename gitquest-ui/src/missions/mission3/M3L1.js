@@ -1,7 +1,7 @@
-export const level1m9 = {
-  id: 'L1M9',
+export const m3l1 = {
+  id: 'M3L1',
   cmd: 'git branch',
-  diff: 'easy',
+  diff: 'med',
   title: 'git branch',
   subtitle: 'Create a new, independent line of development',
   briefing: `HQ wants you to test a decoy operation to lure Shadow Breach into a trap, but you can't risk corrupting the main investigation. Create a separate branch for the operation.`,
@@ -38,8 +38,8 @@ export const level1m9 = {
     scenario: `You need to create a new branch called decoy-operation to safely develop a countermeasure. What command do you use?`,
     expected: 'git branch decoy-operation',
     reject: [
-      { cmd: 'git checkout -b decoy-operation', message: 'That creates the branch AND switches to it in one move \u2014 this step only creates the branch. Switching comes next mission.' },
-      { cmd: 'git switch -c decoy-operation', message: 'That creates the branch AND switches to it in one move \u2014 this step only creates the branch. Switching comes next mission.' },
+      { cmd: 'git checkout -b decoy-operation', message: 'That creates the branch AND switches to it in one move \u2014 this step only creates the branch. Switching comes next lesson.' },
+      { cmd: 'git switch -c decoy-operation', message: 'That creates the branch AND switches to it in one move \u2014 this step only creates the branch. Switching comes next lesson.' },
     ],
     hint: 'git branch followed by the new branch name.',
   },

@@ -1,5 +1,5 @@
-export const level2m2 = {
-  id: 'L2M2',
+export const m3l4 = {
+  id: 'M3L4',
   cmd: 'git stash pop',
   diff: 'med',
   title: 'git stash pop',
@@ -41,6 +41,6 @@ export const level2m2 = {
       { cmd: 'git stash apply', message: 'Close — apply also restores the work, but it leaves a copy sitting in the stash list. This mission asks for the command that restores AND removes it.' },
       { cmd: 'git stash', message: 'That shelves work. You want the opposite — bringing shelved work back.' },
     ],
-    hint: 'Same command as last mission, plus one word that means "take it off the stack."',
+    hint: 'Same command as last lesson, plus one word that means "take it off the stack."',
   },
 }
