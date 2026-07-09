@@ -2,7 +2,7 @@
 //
 // A short scored multiple-choice quiz. Scoring is a pure function; the 75%
 // threshold (approved policy) decides whether the learner is recommended to
-// start at Level 2 (Field Operations) or at the beginning. Field agents keep free
+// start at Mission 2 (Damage Control) or at the beginning. Field agents keep free
 // navigation regardless — the placement result is a recommendation.
 
 export const PLACEMENT_THRESHOLD = 0.75
@@ -87,6 +87,6 @@ export function scorePlacement(answers, questions = PLACEMENT_QUESTIONS) {
     total,
     pct,
     passed,
-    recommendedMission: passed ? 'L2' : 'L1',
+    recommendedMission: passed ? 'M2' : 'M1',
   }
 }
