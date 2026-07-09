@@ -1,5 +1,5 @@
-export const level3m8 = {
-  id: 'L3M8',
+export const m4l3 = {
+  id: 'M4L3',
   cmd: 'git rebase -i',
   diff: 'hard',
   title: 'git rebase -i',

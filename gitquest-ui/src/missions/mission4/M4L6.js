@@ -1,5 +1,5 @@
-export const level3m6 = {
-  id: 'L3M6',
+export const m4l6 = {
+  id: 'M4L6',
   cmd: 'git bisect good',
   diff: 'hard',
   title: 'git bisect good',

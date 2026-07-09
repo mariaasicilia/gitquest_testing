@@ -1,5 +1,5 @@
-export const level3m3 = {
-  id: 'L3M3',
+export const m4l8 = {
+  id: 'M4L8',
   cmd: 'git stash branch',
   diff: 'hard',
   title: 'git stash branch',
