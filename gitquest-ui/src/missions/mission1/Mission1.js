@@ -4,6 +4,7 @@ import { m1l3 } from './M1L3'
 import { m1l4 } from './M1L4'
 import { m1l5 } from './M1L5'
 import { m1l6 } from './M1L6'
+import { m1fa } from './M1FA'
 
 export const mission1 = {
   id: 'M1', x: 55, y: 150,
@@ -14,7 +15,9 @@ export const mission1 = {
     { id: 'M1A1', title: 'Assignment 1.1 — Get the Intel', desc: 'Getting code, staying current, reading your state', lessons: ['M1L1', 'M1L2', 'M1L3'] },
     { id: 'M1A2', title: 'Assignment 1.2 — Report In', desc: 'Recording work and sharing it with the team', lessons: ['M1L4', 'M1L5', 'M1L6'] },
   ],
+  fieldAssignment: 'M1FA',
   levels: {
     M1L1: m1l1, M1L2: m1l2, M1L3: m1l3, M1L4: m1l4, M1L5: m1l5, M1L6: m1l6,
+    M1FA: m1fa,
   },
 }

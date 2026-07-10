@@ -116,6 +116,15 @@ function MissionPanel({ quest, onClose, onStartLevel }) {
               })}
             </div>
           ))}
+          {quest.fieldAssignment && quest.levels[quest.fieldAssignment] && (
+            <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
+              <div style={{ marginTop: 4, fontSize: 10, letterSpacing: '0.1em', color: '#e4a020', fontFamily: 'monospace' }}>
+                ⚔ FIELD ASSIGNMENT — all commands, in sequence
+              </div>
+              <LevelRow level={quest.levels[quest.fieldAssignment]} questId={quest.id}
+                isLevelComplete={isLevelComplete} progress={progress} onStartLevel={onStartLevel} fieldAssignment />
+            </div>
+          )}
         </div>
 
         {/* Footer */}

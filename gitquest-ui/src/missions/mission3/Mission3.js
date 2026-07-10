@@ -7,6 +7,7 @@ import { m3l6 } from './M3L6'
 import { m3l7 } from './M3L7'
 import { m3l8 } from './M3L8'
 import { m3l9 } from './M3L9'
+import { m3fa } from './M3FA'
 
 export const mission3 = {
   id: 'M3', x: 290, y: 150,
@@ -17,8 +18,10 @@ export const mission3 = {
     { id: 'M3A1', title: 'Assignment 3.1 — Open a Covert Thread', desc: 'Parallel work and context-switching mid-task', lessons: ['M3L1', 'M3L2', 'M3L3', 'M3L4'] },
     { id: 'M3A2', title: 'Assignment 3.2 — Reunify', desc: 'Seeing the field, then integrating parallel work deliberately', lessons: ['M3L5', 'M3L6', 'M3L7', 'M3L8', 'M3L9'] },
   ],
+  fieldAssignment: 'M3FA',
   levels: {
     M3L1: m3l1, M3L2: m3l2, M3L3: m3l3, M3L4: m3l4, M3L5: m3l5,
     M3L6: m3l6, M3L7: m3l7, M3L8: m3l8, M3L9: m3l9,
+    M3FA: m3fa,
   },
 }

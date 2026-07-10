@@ -9,6 +9,7 @@ import { m4l8 } from './M4L8'
 import { m4l9 } from './M4L9'
 import { m4l10 } from './M4L10'
 import { m4l11 } from './M4L11'
+import { m4fa } from './M4FA'
 
 export const mission4 = {
   id: 'M4', x: 405, y: 95,
@@ -20,8 +21,10 @@ export const mission4 = {
     { id: 'M4A2', title: 'Assignment 4.2 — Search & Recover', desc: 'Finding bugs in history; recovering "lost" work', lessons: ['M4L5', 'M4L6', 'M4L7', 'M4L8'] },
     { id: 'M4A3', title: 'Assignment 4.3 — Seal the Vault', desc: 'Release rituals: milestones, signed provenance, final export', lessons: ['M4L9', 'M4L10', 'M4L11'] },
   ],
+  fieldAssignment: 'M4FA',
   levels: {
     M4L1: m4l1, M4L2: m4l2, M4L3: m4l3, M4L4: m4l4, M4L5: m4l5, M4L6: m4l6,
     M4L7: m4l7, M4L8: m4l8, M4L9: m4l9, M4L10: m4l10, M4L11: m4l11,
+    M4FA: m4fa,
   },
 }
