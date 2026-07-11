@@ -14,7 +14,7 @@ Status of the implementation against `HANDOFF.md`. Supersedes the "What is done 
 | FR-06 | Quizzes with scores + wrong-answer explanations | ✅ Done (decision D1) | Battles are scored assessments (100 −25/wrong −10/hint, floor 25; persisted best score). The placement quiz provides scored multiple-choice with per-question explanations. |
 | FR-07 | Track lesson/module completion | ✅ Done | `ProgressContext` persists completions, best scores, hints, achievements to `localStorage`; survives refresh; import/export/reset. |
 | FR-08 | Overall + per-level progress | ✅ Done | Topbar overall %, per-mission bars, Trophy Room field record — all derived (`src/game/stats.js`). |
-| FR-11 | Later lessons: push, fetch, force-with-lease, rebase, branch -d | ✅ Done | M3 (push, fetch vs pull, force-with-lease vs force), M4 (safe `branch -d`, rebase, conflict recovery), M5 capstone. |
+| FR-11 | Later lessons: push, fetch, force-with-lease, rebase, branch -d | ✅ Done | All five taught: push (M1), fetch (M3, vs pull), rebase (M3, vs merge), branch -d (M3), force-with-lease (M4, paired with rebase -i). Reinstated by the workflow-curriculum redesign after being dropped in storyline v2. |
 
 ## Functional requirements (Should / stretch)
 
@@ -37,7 +37,7 @@ Status of the implementation against `HANDOFF.md`. Supersedes the "What is done 
 | Consolidate/fix the root tests project | ✅ Fixed (renamed to `.ts`, corrected import) and kept as a passing historical spike; `gitquest-ui/tests` documented as authoritative. |
 | Rewrite READMEs | ✅ Root `README.md` added; `gitquest-ui/README.md` rewritten (was the Vite template). |
 | Lint clean | ✅ 0 errors (was 23 at baseline). |
-| Automated tests | ✅ 85 passing in `gitquest-ui` (8 suites) + 3 in the root spike. |
+| Automated tests | ✅ 89 passing in `gitquest-ui` (8 suites) + 3 in the root spike. |
 | Cross-browser manual pass | ⬜ Remaining — see TEST-LOG. |
 
 ## Decisions of record

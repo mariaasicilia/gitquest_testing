@@ -1,7 +1,7 @@
 # GitQuest — Project Handoff
 
 **Last updated:** July 11, 2026
-**Status:** MVP complete and green (build, lint, 86 tests). Not yet merged to `main`; not yet cross-browser verified.
+**Status:** MVP complete and green (build, lint, 89 tests). Curriculum redesigned to workflow-first Missions → Assignments → Field Assignments (resolves FR-11). Not yet merged to `main`; not yet cross-browser verified.
 
 This document supersedes the original handoff. It is the single entry point for anyone picking up GitQuest: what it is, where the code lives, what's done, what's decided, and what's left.
 
@@ -63,17 +63,20 @@ The root parser spike, if needed: `cd tests && npm ci && npm run test` (3 tests)
 - **Achievements.** 6 badges with earn dates, monotone (never revoked).
 - **Arsenal.** Coins earned (+10/lesson, +25/mission); purchases persist. Two items have real effects (Auto-hint Module, Ghost Command); cosmetics are labeled in-app as prototypes.
 
-### Curriculum (Operation Shadow Breach — 3 levels × 10 missions)
+### Curriculum (Operation Shadow Breach — 4 workflow missions)
 
-| Level | Difficulty | Commands |
+Hierarchy: **Mission → Assignment (commands that travel together) → Level (one lesson) + ⚔ Field Assignment** (the mission finale: a multi-step *sequential* battle composing that mission's commands, powered by the sequence engine).
+
+| Mission | Theme | Assignments |
 |---|---|---|
-| **L1 — Recruit Training** | Easy (1★) | `clone`, `pull`, `status`, `add <file>`, `commit -m`, `log`, `diff`, `restore <file>`, `branch <name>`, `checkout <branch>` |
-| **L2 — Field Operations** | Intermediate (2★) | `stash`, `stash pop`, `commit --amend --no-edit`, `push`, `merge`, `tag`, `branch -a`, `revert HEAD`, `reset --hard HEAD~1`, `branch -d` |
-| **L3 — Ghost Protocol** | Hard (3★) | `cherry-pick`, `rebase`, `stash branch`, `merge --squash`, `bisect start`, `bisect good`, `reflog`, `rebase -i`, `commit -S`, `archive` |
+| **M1 — First Contact: The Daily Loop** (easy, 1★) | Day-one survival | Get the Intel (clone/pull/status) · Report In (add/commit/**push**) · ⚔ FA |
+| **M2 — Damage Control** (med, 2★) | Reading & the Undo Ladder | Inspect (log/diff) · Undo Ladder (amend/restore/revert/reset, by blast radius) · ⚔ FA |
+| **M3 — Parallel Operations** (med, 2★) | Branching & integration | Covert Thread (branch/checkout/stash/pop) · Reunify (**fetch**/branch -a/merge+PR note/**rebase**/branch -d) · ⚔ FA |
+| **M4 — Ghost Protocol** (hard, 3★) | History surgery & shipping | Rewrite (cherry-pick/squash/rebase -i/**force-with-lease**) · Recover (bisect/reflog/stash branch) · Ship (tag/sign/archive) · ⚔ FA |
 
-Each level ends with its storyline celebration; finishing L3 shows the Director's operation-complete message.
+**36 units = 32 lessons + 4 Field Assignments.** Ordering is frequency-first. FR-11 is fully satisfied — fetch and force-with-lease were reinstated in pedagogically load-bearing slots. Each mission ends with its celebration outro; M4's includes the Director's message.
 
-**Terminology gotcha:** the code registry calls each storyline *Level* a "mission" (`MISSIONS`, `MISSION_ORDER`) containing "levels" (the lessons). The data shape predates the storyline naming. Lesson ids are `L1M1`–`L3M10`.
+**Terminology:** registry entries are missions (`M1`–`M4`); each has `assignments` metadata, a `fieldAssignment` id, and `levels` (the lessons). Lesson ids are `M1L1`…`M4L11` plus `M1FA`–`M4FA`.
 
 ### Verification status
 
@@ -81,7 +84,7 @@ Each level ends with its storyline celebration; finishing L3 shows the Director'
 |---|---|
 | `npm run build` | ✅ passes |
 | `npm run lint` | ✅ 0 errors (was 23 at baseline) |
-| `npm run test` (gitquest-ui) | ✅ 8 suites, 86/86 |
+| `npm run test` (gitquest-ui) | ✅ 8 suites, 89/89 |
 | Root parser spike | ✅ 3/3 |
 | Cross-browser (Chrome/Firefox/Safari) | ⬜ **not done** — see §6 |
 
@@ -103,7 +106,7 @@ Full detail in `docs/PROJECT-STATUS.md`. Summary:
 | FR-08 overall + per-level progress | ✅ |
 | FR-09 achievements (Should) | ✅ |
 | FR-10 repo state graph (stretch) | ⬜ not built |
-| FR-11 later lessons (push, fetch, force-with-lease, rebase, branch -d) | ⚠️ **partial — needs a decision, see §6** |
+| FR-11 later lessons (push, fetch, force-with-lease, rebase, branch -d) | ✅ resolved by the curriculum redesign |
 | FR-12 placement quiz | ✅ |
 
 ---
@@ -112,10 +115,7 @@ Full detail in `docs/PROJECT-STATUS.md`. Summary:
 
 ### 🔴 Blocking a merge / needs a human decision
 
-1. **FR-11 gap — `git fetch` and `git push --force-with-lease` are not in the curriculum.**
-   The handoff lists both as Must-priority. The teammate's updated storyline (`Operation_Shadow_Breach_Latest_Storyline.txt`) omits them, and the curriculum now follows that storyline faithfully. This was flagged rather than silently resolved, because it's a scope call, not a bug.
-   **Options:** (a) accept the storyline as-is and amend FR-11; (b) reinstate the two lessons as extra L2/L3 missions — the retired lesson content still exists in git history on the `complete-mvp` commit and can be restored. Also retired: `git rebase --continue` and the 7-step capstone.
-   **Owner needed.**
+1. ~~FR-11 gap~~ **RESOLVED** by the team-approved curriculum redesign (branch `feature/curriculum-redesign`): fetch and force-with-lease reinstated; the sequence-battle capstone concept returned as four per-mission Field Assignments. Only `git rebase --continue` remains retired (its content lives in git history).
 
 2. **Cross-browser manual pass (Chrome, Firefox, Safari).** Never run — the build container has no browsers. Tests run under jsdom. The app uses no APIs newer than ES2020/standard DOM, so risk is low, but this is the last Definition-of-Done item.
 
@@ -132,7 +132,7 @@ From the old-vs-new UI review:
 ### 🟢 Known limitations / future scope
 
 - **Saved-progress compatibility:** lesson ids changed (`M1L1` → `L1M1`), so any pre-existing `localStorage` progress resets. Stale ids are filtered safely (no crash), so this is a clean reset, not a bug. Fine pre-release.
-- **The sequence-battle engine** (multi-step boss missions) is fully implemented and tested via a synthetic lesson, but **no live lesson uses it** — the storyline dropped the capstone. It's ready if the team wants a boss battle at the end of L3.
+- **The sequence-battle engine** now powers the four live Field Assignments (M1FA–M4FA), each covered by tests.
 - **Arsenal economy is partial by design.** Only 2 of the items do anything; cosmetics say so in-app. A full economy/cosmetic system is future work.
 - Not built: real Git execution sandbox, user accounts/sync, repo state graph (FR-10), per-lesson multiple-choice question banks, mobile layout audit, localization.
 
@@ -154,7 +154,7 @@ From the old-vs-new UI review:
 - **Don't hard-code game values in components.** Every displayed number must come from `src/game/stats.js` or progress state. Removing static values (a fake 45% bar, `💰120`, static trophies) was a large part of this work; don't reintroduce them.
 - **Lesson difficulty must be one of `easy` / `med` / `hard`.** The string `"medium"` silently degrades to 1 star. If you add difficulty values, update `DIFF_STARS` in `MissionMap.jsx`.
 - **`TrainingPage` is keyed by lesson id in `App.jsx`.** Removing that `key` reintroduces a bug where advancing to the next lesson keeps the previous lesson's completion panel and no input field.
-- **Adding a lesson** means: create the lesson file, register it in that level's `LevelN.js`, and update the lesson-count expectations in `tests/statsAndAchievements.test.js`. Unlocks, progress, coins, and the map all derive from the registry automatically.
+- **Adding a lesson** means: create the lesson file, register it in that mission's `MissionN.js` (both `levels` and the right `assignments[].lessons` list), and update the count expectations in `tests/statsAndAchievements.test.js`. Unlocks, progress, coins, and the map all derive from the registry automatically. The Field Assignment must stay LAST in the `levels` object — recruit-mode gating depends on registry order.
 - **Tailwind is installed but the UI uses inline styles.** Stay consistent with inline styles unless the team decides to migrate deliberately.
 
 ---

@@ -27,13 +27,14 @@ The Welcome screen choice is persisted into progress state (`progress.mode`) and
 
 ## Curriculum
 
-| Level | Focus | Missions |
+| Mission | Workflow theme | Assignments → commands |
 |---|---|---|
-| L1 — Recruit Training (Easy) | Repository basics | `clone`, `pull`, `status`, `add <file>`, `commit -m`, `log`, `diff`, `restore <file>`, `branch <name>`, `checkout <branch>` |
-| L2 — Field Operations (Intermediate) | Team coordination & recovery | `stash`, `stash pop`, `commit --amend --no-edit`, `push`, `merge`, `tag`, `branch -a`, `revert HEAD`, `reset --hard HEAD~1`, `branch -d` |
-| L3 — Ghost Protocol (Hard) | History surgery | `cherry-pick`, `rebase main`, `stash branch`, `merge --squash`, `bisect start`, `bisect good`, `reflog`, `rebase -i HEAD~3`, `commit -S`, `archive` |
+| **M1 — First Contact: The Daily Loop** (easy) | The commands you run every day | 1.1 Get the Intel: `clone`, `pull`, `status` · 1.2 Report In: `add`, `commit -m`, `push` · ⚔ FA: the full loop in sequence |
+| **M2 — Damage Control: Reading & Undoing** (med) | Inspect, then choose the right undo | 2.1 Inspect the Evidence: `log`, `diff` · 2.2 The Undo Ladder: `--amend`, `restore`, `revert`, `reset --hard` · ⚔ FA: diagnose + undo an incident |
+| **M3 — Parallel Operations: Branching & Integration** (med) | Work in parallel, integrate deliberately | 3.1 Open a Covert Thread: `branch`, `checkout`, `stash`, `stash pop` · 3.2 Reunify: `fetch`, `branch -a`, `merge` (+ PR note), `rebase`, `branch -d` · ⚔ FA: the feature-branch workflow |
+| **M4 — Ghost Protocol: History Surgery & Shipping** (hard) | Rewrite, recover, release | 4.1 Rewrite the Record: `cherry-pick`, `merge --squash`, `rebase -i`, `push --force-with-lease` · 4.2 Search & Recover: `bisect start/good`, `reflog`, `stash branch` · 4.3 Seal the Vault: `tag`, `commit -S`, `archive` · ⚔ FA: the finale |
 
-Each level ends with a storyline completion celebration, and finishing Level 3 shows the full operation-complete message from the Director. Terminology note: the codebase registry calls each storyline *Level* a "mission" containing "levels" — the data shape predates the storyline naming.
+**36 units total: 32 single-command lessons + 4 Field Assignments** (multi-step sequential battles that compose each mission's commands — the sequence engine validates each step independently and names the failed step). Each mission ends with its storyline celebration; finishing M4 shows the Director's operation-complete message. Ordering is frequency-first: the daily loop comes before everything, and each Assignment groups commands that genuinely travel together (e.g. the Undo Ladder is taught as one unit, ordered by blast radius).
 
 ## Command validation (`src/game/validateCommand.js`)
 
