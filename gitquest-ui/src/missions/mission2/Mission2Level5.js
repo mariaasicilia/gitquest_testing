@@ -39,6 +39,7 @@ export const mission2level5 = {
   battle: {
     scenario: `suspect-file.txt has been modified incorrectly and is not yet staged. What command reverts it to the version from your last commit?`,
     expected: 'git restore suspect-file.txt',
+    accept: ['git checkout -- suspect-file.txt'],
     hint: 'Restore a single specific file to its last committed state.',
   },
 }

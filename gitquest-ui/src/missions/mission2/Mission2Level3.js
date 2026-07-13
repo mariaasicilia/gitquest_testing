@@ -38,6 +38,10 @@ export const mission2level3 = {
   battle: {
     scenario: `You need to create a new branch called decoy-operation to safely develop a countermeasure. What command do you use?`,
     expected: 'git branch decoy-operation',
+    reject: [
+      { cmd: 'git checkout -b decoy-operation', message: 'That creates the branch AND switches to it in one move \u2014 this step only creates the branch. Switching comes next mission.' },
+      { cmd: 'git switch -c decoy-operation', message: 'That creates the branch AND switches to it in one move \u2014 this step only creates the branch. Switching comes next mission.' },
+    ],
     hint: 'git branch followed by the new branch name.',
   },
 }
