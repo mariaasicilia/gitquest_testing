@@ -46,7 +46,7 @@ Battles are validated by a structured, data-driven engine — not raw string equ
 
 ## Assessment scoring (the quiz mechanism)
 
-The command battle is the per-lesson assessment (a project decision; see `docs/PROJECT-STATUS.md`). Each battle is scored: **100** minus **25 per wrong attempt** minus **10 if the hint was revealed**, floored at **25**. The capstone's score is the average of its step scores. Best scores are persisted per lesson and aggregated in the Trophy Room. The placement quiz provides classic scored multiple-choice with wrong-answer explanations.
+The command battle is the per-lesson assessment (a project decision, recorded in the root README). Each battle is scored: **100** minus **25 per wrong attempt** minus **10 if the hint was revealed**, floored at **25**. The capstone's score is the average of its step scores. Best scores are persisted per lesson and aggregated in the Trophy Room. The placement quiz provides classic scored multiple-choice with wrong-answer explanations.
 
 **Hint policy:** after one wrong attempt a "reveal hint" button appears; after two wrong attempts the hint reveals automatically. (The Auto-hint arsenal module reveals it after the first wrong attempt.)
 
@@ -85,7 +85,9 @@ src/
 
 ## Testing
 
-`npm run test` runs the authoritative suite in `tests/`: unit tests for the validator, unlock rules, stats, achievements, and placement scoring, plus integration tests for `ProgressContext` (persistence, hydration, guarded purchases, reset) and `TrainingPage` (correct/incorrect/empty paths, hint timing, scoring, lesson-specific rejections, capstone sequence). Cross-browser verification (Chrome/Firefox/Safari) is a manual pass tracked in `docs/TEST-LOG.md`.
+`npm run test` runs the authoritative Jest + Testing Library suite in `tests/` (jsdom): unit tests for the validator, unlock rules, stats, achievements, and placement scoring, plus integration tests for `ProgressContext` (persistence, hydration, guarded purchases, reset), `TrainingPage` (correct/incorrect/empty paths, hint timing, scoring, lesson-specific rejections, Field Assignment sequences), and app-shell routing. Coverage and results are self-documenting — run the suite rather than trusting a report.
+
+**Planned improvements:** a GitHub Actions workflow to run build + lint + tests on every PR and publish results automatically (tracked as a follow-on ticket), and a manual cross-browser pass (Chrome/Firefox/Safari) before release.
 
 ## Deployment
 
